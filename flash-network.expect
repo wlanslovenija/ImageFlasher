@@ -1,0 +1,97 @@
+#!/usr/bin/expect --
+#
+# Re-Flashes Fonera 2200 with openwrt. (c) Andreas Fuchs and Marius Kintel, 2008.
+# MIT licensed.
+#
+
+# TODO Get this somehow
+set FONERA_HOST "192.168.1.254"
+set FLASHER_HOST "192.168.1.99"
+
+set prompt "RedBoot> "
+
+proc abort {} {
+  exit
+}
+
+foreach arg $argv {
+    if {[regexp "lzma$" $arg]} {set kernel [file tail $arg]} \
+    elseif {[regexp "jffs2-64k$" $arg]} {set fs [file tail $arg]}
+}
+if {![info exists kernel]} {set kernel "openwrt-atheros-vmlinux.lzma"}
+if {![info exists fs]} {set fs "openwrt-atheros-root.jffs2-64k"}
+
+puts "--- CONFIGURATION ---"
+puts "Kernel file: $kernel"
+puts "FS file:     $fs"
+puts "Fonera IP:   $FONERA_HOST"
+puts "Flasher IP:  $FLASHER_HOST"
+puts ""
+puts "TFTP server must be running on $FLASHER_HOST with kernel and filesystem"
+puts "files available. If settings are incorrect abort in 5 seconds!"
+sleep 5
+puts ""
+
+# Wait until host is reachable
+set pingret 1
+while {$pingret != 0} {
+  set pingret [catch {system ping -c 1 -i 0.2 $FONERA_HOST}]
+}
+
+# Establish a connection with the host
+spawn telnet $FONERA_HOST 9000
+
+expect {
+  timeout {
+    send "\03\03"
+    expect {
+      timeout abort
+      $prompt
+    }
+  }
+  "Executing" {
+    send "\03\03"
+    expect {
+      timeout abort
+      $prompt
+    }
+  }
+  $prompt
+}
+
+# Push IP configuration
+send "ip_addr -h $FLASHER_HOST -l $FONERA_HOST/24\n"
+
+# Format flash system
+expect timeout abort $prompt { send "fis init\n" }
+expect "About to" { send "y\n" }
+
+# Create kernel partition
+expect $prompt
+send "load -r -b 0x80041000 $kernel\n"
+
+expect {
+    "Can't" abort
+    timeout abort
+    "assumed entry at"
+}
+expect $prompt
+send "fis create -e 0x80041000 -r 0x80041000 vmlinux.bin.l7\n"
+
+# Create root filesystem partition
+expect -timeout 900 $prompt
+send "load -r -b 0x80041000 $fs\n"
+
+expect {
+    "Can't" abort
+    timeout abort
+    "assumed entry at"
+}
+
+expect $prompt
+send "fis create -l 0x06F0000 rootfs\n"
+expect -timeout 1000 $prompt
+
+# We are done, reboot
+send "reset\n"
+
