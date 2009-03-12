@@ -60,15 +60,15 @@ expect {
 }
 
 # Push IP configuration
-send "ip_addr -h $FLASHER_HOST -l $FONERA_HOST/24\n"
+send "ip_addr -h $FLASHER_HOST -l $FONERA_HOST/24\r"
 
 # Format flash system
-expect timeout abort $prompt { send "fis init\n" }
-expect "About to" { send "y\n" }
+expect timeout abort $prompt { send "fis init\r" }
+expect "About to" { send "y\r" }
 
 # Create kernel partition
 expect $prompt
-send "load -r -b 0x80041000 $kernel\n"
+send "load -r -b 0x80041000 $kernel\r"
 
 expect {
     "Can't" abort
@@ -76,11 +76,11 @@ expect {
     "assumed entry at"
 }
 expect $prompt
-send "fis create -e 0x80041000 -r 0x80041000 vmlinux.bin.l7\n"
+send "fis create -e 0x80041000 -r 0x80041000 vmlinux.bin.l7\r"
 
 # Create root filesystem partition
 expect -timeout 900 $prompt
-send "load -r -b 0x80041000 $fs\n"
+send "load -r -b 0x80041000 $fs\r"
 
 expect {
     "Can't" abort
@@ -89,9 +89,10 @@ expect {
 }
 
 expect $prompt
-send "fis create -l 0x06F0000 rootfs\n"
+send "fis create -l 0x06F0000 rootfs\r"
 expect -timeout 1000 $prompt
 
 # We are done, reboot
-send "reset\n"
+send "reset\r"
+sleep 1
 
