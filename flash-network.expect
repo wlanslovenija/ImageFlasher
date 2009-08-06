@@ -1,98 +1,76 @@
-#!/usr/bin/expect --
+#!/usr/bin/expect -f
 #
-# Re-Flashes Fonera 2200 with openwrt. (c) Andreas Fuchs and Marius Kintel, 2008.
-# MIT licensed.
+# Configures and flashes Fonera
 #
 
-# TODO Get this somehow
-set FONERA_HOST "192.168.1.254"
-set FLASHER_HOST "192.168.1.99"
+# It configures the same IP addresses as Fonera+ has by default
+set FONERA_LISTEN_IP 192.168.1.1
+set FONERA_LISTEN_MASK 255.255.255.0
+set FLASHER_DEFAULT_IP 192.168.1.254
 
-set prompt "RedBoot> "
+# TODO Get local IP address and free IP address in a local IP range
+set FONERA_CURRENT_IP_MASK 192.168.1.1/24
+set FLASHER_CURRENT_IP 192.168.1.254
 
-proc abort {} {
-  exit
-}
+set ROOT_FILENAME openwrt-atheros-root.jffs2-64k
+set KERNEL_FILENAME openwrt-atheros-vmlinux.lzma
 
-foreach arg $argv {
-    if {[regexp "lzma$" $arg]} {set kernel [file tail $arg]} \
-    elseif {[regexp "jffs2-64k$" $arg]} {set fs [file tail $arg]}
-}
-if {![info exists kernel]} {set kernel "openwrt-atheros-vmlinux.lzma"}
-if {![info exists fs]} {set fs "openwrt-atheros-root.jffs2-64k"}
+system ping -n -o $FONERA_LISTEN_IP
 
-puts "--- CONFIGURATION ---"
-puts "Kernel file: $kernel"
-puts "FS file:     $fs"
-puts "Fonera IP:   $FONERA_HOST"
-puts "Flasher IP:  $FLASHER_HOST"
-puts ""
-puts "TFTP server must be running on $FLASHER_HOST with kernel and filesystem"
-puts "files available. If settings are incorrect abort in 5 seconds!"
-sleep 5
-puts ""
-
-# Wait until host is reachable
-set pingret 1
-while {$pingret != 0} {
-  set pingret [catch {system ping -c 1 -i 0.2 $FONERA_HOST}]
-}
-
-# Establish a connection with the host
-spawn telnet $FONERA_HOST 9000
-
+spawn telnet -N $FONERA_LISTEN_IP 9000
+set timeout 3600
+set send_slow { 5 .05 }
+expect "enter ^C to abort"
+send \003
+expect "RedBoot>"
+send -s -- "fconfig boot_script_timeout 10\r"
 expect {
-  timeout {
-    send "\03\03"
-    expect {
-      timeout abort
-      $prompt
-    }
-  }
-  "Executing" {
-    send "\03\03"
-    expect {
-      timeout abort
-      $prompt
-    }
-  }
-  $prompt
+	"(y/n)?"	{ send -s -- "y\r" ; exp_continue}
+	"RedBoot>"
 }
-
-# Push IP configuration
-send "ip_addr -h $FLASHER_HOST -l $FONERA_HOST/24\r"
-
-# Format flash system
-expect timeout abort $prompt { send "fis init\r" }
-expect "About to" { send "y\r" }
-
-# Create kernel partition
-expect $prompt
-send "load -r -b 0x80041000 $kernel\r"
-
+send -s -- "fconfig bootp_my_ip $FONERA_LISTEN_IP\r"
 expect {
-    "Can't" abort
-    timeout abort
-    "assumed entry at"
+	"(y/n)?"	{ send -s -- "y\r" ; exp_continue }
+	"RedBoot>"
 }
-expect $prompt
-send "fis create -e 0x80041000 -r 0x80041000 vmlinux.bin.l7\r"
-
-# Create root filesystem partition
-expect -timeout 900 $prompt
-send "load -r -b 0x80041000 $fs\r"
-
+send -s -- "fconfig bootp_my_ip_mask $FONERA_LISTEN_MASK\r"
 expect {
-    "Can't" abort
-    timeout abort
-    "assumed entry at"
+	"(y/n)?"	{ send -s -- "y\r" ; exp_continue }
+	"RedBoot>"
 }
-
-expect $prompt
-send "fis create -l 0x06F0000 rootfs\r"
-expect -timeout 1000 $prompt
-
-# We are done, reboot
-send "reset\r"
+send -s -- "fconfig bootp_server_ip $FLASHER_DEFAULT_IP\r"
+expect {
+	"(y/n)?"	{ send -s -- "y\r" ; exp_continue }
+	"RedBoot>"
+}
+send -s -- "fconfig boot_script_data\r"
+expect ">>"
+send -s -- "fis load -l vmlinux.bin.l7\r"
+send -s -- "exec\r"
+send -s -- "\r"
+expect {
+	"(y/n)?"	{ send -s -- "y\r" ; exp_continue }
+	"RedBoot>"
+}
+send -s -- "ip_address -h $FLASHER_CURRENT_IP -l $FONERA_CURRENT_IP_MASK\r"
+expect "RedBoot>"
+send -s -- "fis init\r"
+expect "(y/n)?"
+send -s -- "y\r"
+expect "RedBoot>"
+send -s -- "load -r -b %\{FREEMEMLO\} $ROOT_FILENAME\r"
+expect {
+	"Can't load"	{ expect "RedBoot>" ; send_user -- "\nCould not load an image file.\n" ; exit 1 }
+	"RedBoot>"
+}
+send -s -- "fis create -f 0xA8030000 -l 0x006F0000 -e 0x00000000 rootfs\r"
+expect "RedBoot>"
+send -s -- "load -r -b %\{FREEMEMLO\} $KERNEL_FILENAME\r"
+expect {
+	"Can't load"	{ expect "RedBoot>" ; send_user -- "\nCould not load an image file.\n" ; exit 1 }
+	"RedBoot>"
+}
+send -s -- "fis create -e 0x80041000 -r 0x80041000 vmlinux.bin.l7\r"
+expect "RedBoot>"
+send -s -- "reset\r"
 sleep 1
-
