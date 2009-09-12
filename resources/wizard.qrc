@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/" >
+        <file>banner.png</file>
+        <file>state_select.png</file>
+        <file>icon.png</file>
+        <file>state_install.png</file>
+        <file>state_power.png</file>
+        <file>state_done.png</file>
+    </qresource>
+</RCC>
