@@ -1,30 +1,24 @@
-#include "wizard.h"
-#include "ui_wizard.h"
+/*
+ * wlan Ljubljana firmware flasher
+ */
+#include "gui/wizard.h"
 
-FlashWizard::FlashWizard(QWidget *parent) :
-    QWizard(parent),
-    m_ui(new Ui::FlashWizard)
+FlashWizard::FlashWizard()
+  : QWizard()
 {
-    m_ui->setupUi(this);
+  // Setup layout
+  m_ui.setupUi(this);
+  
+  // Connect to signals
+  connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(slotCurrentIdChanged(int)));
 }
 
-FlashWizard::~FlashWizard()
+void FlashWizard::slotCurrentIdChanged(int id)
 {
-    delete m_ui;
-}
-
-void FlashWizard::changeEvent(QEvent *e)
-{
-    switch (e->type()) {
-    case QEvent::LanguageChange:
-        m_ui->retranslateUi(this);
-        break;
-    default:
-        break;
-    }
-}
-
-void FlashWizard::on_FlashWizard_currentIdChanged(int id)
-{
-    printf("%d \n", id);
+  switch (id) {
+    case Intro: break;
+    case RouterSelection: break;
+    case FirmwareSelection: break;
+  }
+  qDebug("hello %d", id);
 }

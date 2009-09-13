@@ -1,27 +1,43 @@
-#ifndef FLASHWIZARD_H
-#define FLASHWIZARD_H
+/*
+ * wlan Ljubljana firmware flasher
+ **/
+#ifndef GUI_FLASHWIZARD_H
+#define GUI_FLASHWIZARD_H
 
 #include <QtGui/QWizard>
 
-namespace Ui {
-    class FlashWizard;
-}
+#include "gui/ui_wizard.h"
 
+/**
+ * The main wizard of our firmware flasher. It is designed to guide
+ * the user thorugh firmware flashing process.
+ */
 class FlashWizard : public QWizard {
     Q_OBJECT
-    Q_DISABLE_COPY(FlashWizard)
 public:
-    explicit FlashWizard(QWidget *parent = 0);
-    virtual ~FlashWizard();
-
-protected:
-    virtual void changeEvent(QEvent *e);
-
+    /**
+     * Ordered names of wizard pages for easier reference.
+     */
+    enum WizardPages {
+      Invalid = -1,
+      Intro = 0,
+      RouterSelection,
+      FirmwareSelection
+    };
+    
+    /**
+     * Class constructor.
+     */
+    FlashWizard();
 private:
-    Ui::FlashWizard *m_ui;
-
+    Ui::FlashWizard m_ui;
 private slots:
-    void on_FlashWizard_currentIdChanged(int id);
+    /**
+     * This slot gets called when the wizard's active page is changed.
+     *
+     * @param id The newly activated page
+     */
+    void slotCurrentIdChanged(int id);
 };
 
-#endif // FLASHWIZARD_H
+#endif
