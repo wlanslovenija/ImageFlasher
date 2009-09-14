@@ -4,7 +4,6 @@ set(QT_USE_QTXML TRUE)
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(gui)
-add_subdirectory(backends)
 
 include(${QT_USE_FILE})
 

@@ -2,14 +2,17 @@ include(${QT_USE_FILE})
 
 set(gui_SRCS
   wizard.cpp
+  steps/welcome.cpp
 )
 
 set(gui_HDRS
   wizard.h
+  steps/welcome.h
 )
 
 set(gui_UIS
   wizard.ui
+  steps/welcome.ui
 )
 
 qt4_wrap_cpp(gui_MOCS ${gui_HDRS})
