@@ -3,16 +3,19 @@ include(${QT_USE_FILE})
 set(gui_SRCS
   wizard.cpp
   steps/welcome.cpp
+  steps/instructions.cpp
 )
 
 set(gui_HDRS
   wizard.h
   steps/welcome.h
+  steps/instructions.h
 )
 
 set(gui_UIS
   wizard.ui
   steps/welcome.ui
+  steps/instructions.ui
 )
 
 qt4_wrap_cpp(gui_MOCS ${gui_HDRS})

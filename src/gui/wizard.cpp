@@ -8,7 +8,7 @@ FlashWizard::FlashWizard()
 {
   // Initialize forward plan
   m_forwardPlan.push("init");
-  
+  resize(640, 480);
   // Connect signals
   connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(slotStepChanged(int)));
 }
