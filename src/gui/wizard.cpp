@@ -18,6 +18,9 @@ FlashWizard::FlashWizard()
 
 void FlashWizard::addPage(Step *page)
 {
+  if (m_steps.contains(page->getId()))
+    qFatal("Attempted registration of step with duplicate identifier '%s'!", page->getId().toAscii().data());
+  
   int pageId = QWizard::addPage(page);
   m_steps[page->getId()] = pageId;
   
