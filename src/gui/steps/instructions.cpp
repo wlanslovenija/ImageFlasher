@@ -3,11 +3,12 @@
  **/
 #include "gui/steps/instructions.h"
 
-InstructionsStep::InstructionsStep(QString title, QString instructions, QString image)
-  : Step("instructions")
+InstructionsStep::InstructionsStep(const QString &stepId, const QString &title, const QString &instructions, const QString &image)
+  : Step(stepId)
 {
-  m_ui.setupUi(this);
   setTitle(title);
+  
+  m_ui.setupUi(this);
   m_ui.instructions->setText(instructions);
 
   if (image != NULL) {

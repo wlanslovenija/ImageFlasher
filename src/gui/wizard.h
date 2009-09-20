@@ -6,12 +6,12 @@
 
 #include <QWizard>
 #include <QMap>
-#include <QStack>
+#include <QList>
 
 class Step;
 
 // Our plan type
-typedef QStack<QString> Plan;
+typedef QList<QString> Plan;
 
 /**
  * The main wizard of our firmware flasher. It is designed to guide
@@ -39,9 +39,9 @@ public:
     int nextId() const;
     
     /**
-     * Returns the forward plan.
+     * Returns the plan.
      */
-    Plan *getForwardPlan() const;
+    Plan *getPlan() const;
 private slots:
     /**
      * This slot gets called when the current step has changed.
@@ -53,9 +53,9 @@ private:
     // Mapping between string page ids and numeric ids
     QMap<QString, int> m_steps;
     
-    // Forward and backward plans
-    Plan m_forwardPlan;
-    Plan m_backwardPlan;
+    // The wizard plan
+    Plan m_plan;
+    Plan::Iterator m_currentStep;
 };
 
 /**
@@ -88,7 +88,7 @@ protected:
     FlashWizard *flashWizard() const;
     
     /**
-     * Returns a modifiable forward plan.
+     * Returns a modifiable plan.
      */
     Plan *plan() const;
 private:

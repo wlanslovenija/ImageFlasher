@@ -6,9 +6,12 @@
 FlashWizard::FlashWizard()
   : QWizard()
 {
-  // Initialize forward plan
-  m_forwardPlan.push("init");
   resize(640, 480);
+    
+  // Initialize the plan
+  m_plan.append("init");
+  m_currentStep = m_plan.begin();
+  
   // Connect signals
   connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(slotStepChanged(int)));
 }
@@ -25,27 +28,30 @@ void FlashWizard::addPage(Step *page)
 
 int FlashWizard::nextId() const
 {
-  return m_steps[m_forwardPlan.top()];
+  if (m_currentStep + 1 == m_plan.end())
+    return -1;
+  
+  return m_steps[*(m_currentStep + 1)];
 }
 
-Plan *FlashWizard::getForwardPlan() const
+Plan *FlashWizard::getPlan() const
 {
-  return const_cast<Plan*>(&m_forwardPlan);
+  return const_cast<Plan*>(&m_plan);
 }
 
 void FlashWizard::slotStepChanged(int id)
 {
-  if (id == m_steps[m_forwardPlan.top()]) {
-    // We have moved forward, update plans
-    QString stepId = m_forwardPlan.pop();
-    m_backwardPlan.push(stepId);
-  } else if (id == m_steps[m_backwardPlan.top()]) {
-    // We have moved backward, update plans
-    QString stepId = m_backwardPlan.pop();
-    m_forwardPlan.push(stepId);
-  } else {
-    // Unplanned manual move, we are dead
-    qWarning("Unplanned manual wizard move!");
+  if (id == m_steps["init"]) {
+    // Wizard started
+    m_currentStep = m_plan.begin();
+  } else if (id == -1) {
+    // TODO Wizard aborted
+  } else if (id == m_steps[*(m_currentStep + 1)]) {
+    // We have moved forward
+    m_currentStep++;
+  } else if (id == m_steps[*(m_currentStep - 1)]) {
+    // We have moved backward
+    m_currentStep--;
   }
 }
 
@@ -71,6 +77,6 @@ FlashWizard *Step::flashWizard() const
 
 Plan *Step::plan() const
 {
-  return flashWizard()->getForwardPlan();
+  return flashWizard()->getPlan();
 }
 

@@ -18,8 +18,9 @@ int main(int argc, char *argv[])
   
   // Initialize steps
   w.addPage(new WelcomeStep);
-  w.addPage(new InstructionsStep("Sample 1", "This is a sample instruction page with a nice big image below. Niiice.", "state_power.png"));
-  w.addPage(new InstructionsStep("Sample 2", "This is a second sample instruction page with a nice big image below. Veeery niiice.", "state_install.png"));
+  w.addPage(new InstructionsStep("sample-1", "Sample 1", "This is a sample instruction page with a nice big image below. Niiice.", "state_power.png"));
+  w.addPage(new InstructionsStep("sample-2", "Sample 2", "This is a second sample instruction page with a nice big image below. Veeery niiice.", "state_install.png"));
   w.show();
+  
   return a.exec();
 }

@@ -17,6 +17,11 @@ public:
      * Class constructor.
      */
     WelcomeStep();
+protected:
+    /**
+     * Performs page initialization.
+     */
+    void initializePage();
 private:
     // Welcome step GUI layout
     Ui::WelcomeStep m_ui;

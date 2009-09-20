@@ -8,17 +8,22 @@
 #include "gui/ui_instructions.h"
 
 /**
- * The initial welcome step.
+ * The instructions step.
  */
 class InstructionsStep : public Step {
     Q_OBJECT
 public:
     /**
      * Class constructor.
+     *
+     * @param stepId Unique step identifier
+     * @param title Instruction title
+     * @param instructions Instruction text
+     * @param image Image resource location
      */
-    InstructionsStep(QString title, QString instructions, QString image);
+    InstructionsStep(const QString &stepId, const QString &title, const QString &instructions, const QString &image);
 private:
-    // Welcome step GUI layout
+    // Instructions step GUI layout
     Ui::InstructionsStep m_ui;
 };
 
