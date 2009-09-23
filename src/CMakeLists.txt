@@ -12,7 +12,7 @@ set(flasher_SRCS
   main.cpp
 )
 
-qt4_add_resources(flasher_RCS ${CMAKE_CURRENT_SOURCE_DIR}/../resources/wizard.qrc)
+qt4_add_resources(flasher_RCS ${CMAKE_HOME_DIRECTORY}/resources/wizard.qrc)
 add_executable(flasher ${flasher_RCS} ${flasher_SRCS})
 target_link_libraries(flasher gui ${QT_LIBRARIES})
 
