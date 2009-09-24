@@ -15,7 +15,7 @@ typedef QList<QString> Plan;
 
 /**
  * The main wizard of our firmware flasher. It is designed to guide
- * the user thorugh firmware flashing process.
+ * the user through firmware flashing process.
  */
 class FlashWizard : public QWizard {
     Q_OBJECT
@@ -33,7 +33,7 @@ public:
     void addPage(Step *page);
     
     /**
-     * Returns the next page identifier accoording to a preset forward
+     * Returns the next page identifier according to a preset forward
      * plan.
      */
     int nextId() const;
