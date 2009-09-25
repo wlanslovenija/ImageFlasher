@@ -10,7 +10,7 @@
 #endif /* AF_LINK */
 
 #ifdef AF_PACKET
-#include <netpnacket/packet.h>
+#include <netpacket/packet.h>
 #endif /* AF_PACKET */
 
 #include "uipcap.h"
