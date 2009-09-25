@@ -178,12 +178,12 @@ int main(int argc, char *argv[])
     usage(argv[0]);
     return 1;
   }
-  in_port_t connectPort;
+  int connectPort;
   if (res->ai_addr->sa_family == AF_INET) {
-    connectPort = ((struct sockaddr_in *)res->ai_addr)->sin_port;
+    connectPort = ntohs(((struct sockaddr_in *)res->ai_addr)->sin_port);
   }
   else if (res->ai_addr->sa_family == AF_INET6) {
-    connectPort = ((struct sockaddr_in6 *)res->ai_addr)->sin6_port;
+    connectPort = ntohs(((struct sockaddr_in6 *)res->ai_addr)->sin6_port);
   }
   else {
     fprintf(stderr, "Invalid port argument '%s'.\n", argv[3]);
