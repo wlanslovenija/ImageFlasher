@@ -3,7 +3,13 @@
 #include <string.h>
 
 #ifdef WIN32
-#include <winsock.h>
+#ifndef WINVER
+#define WINVER 0x0501
+#endif
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT WINVER
+#endif
+#include <winsock2.h>
 #include <ws2tcpip.h>
 #else /* WIN32 */
 #include <sys/types.h>
@@ -165,23 +171,26 @@ int main(int argc, char *argv[])
     usage(argv[0]);
     return 1;
   }
-  if (argv[3] == '\0') {
-    fprintf(stderr, "Invalid port argument ''.\n");
-    usage(argv[0]);
-    return 1;
-  }
-  char *endPointer = NULL;
-  long connectPort = strtol(argv[3], &endPointer, 10);
-  if (*endPointer != '\0') {
+  struct addrinfo *res;
+  if (getaddrinfo(NULL, argv[3], NULL, &res) != 0) {
     fprintf(stderr, "Invalid port argument '%s'.\n", argv[3]);
     usage(argv[0]);
     return 1;
   }
-  if ((connectPort <= 0x00) || (connectPort > 0xFFFF)) {
+  int connectPort;
+  if (res->ai_addr->sa_family == AF_INET) {
+    connectPort = ((struct sockaddr_in *)res)->sin_port;
+  }
+  else if (res->ai_addr->sa_family == AF_INET6) {
+    connectPort = ((struct sockaddr_in6 *)res)->sin6_port;
+  }
+  else {
     fprintf(stderr, "Invalid port argument '%s'.\n", argv[3]);
     usage(argv[0]);
+    freeaddrinfo(res);
     return 1;
   }
+  freeaddrinfo(res);
 
   UIPCap *uipcap = new UIPCap(&log, &error);
 
@@ -211,7 +220,7 @@ int main(int argc, char *argv[])
   }
 
   char addr[NI_MAXHOST] = "";
-  printf("Destination: %s\n", addressToString((struct sockaddr *)&connectSock, addr));
+  printf("Destination: %s (port %d, interface %s)\n", addressToString((struct sockaddr *)&connectSock, addr), connectPort, connectInterface);
 
   delete uipcap;
 
