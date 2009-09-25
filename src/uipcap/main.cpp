@@ -69,8 +69,8 @@ struct sockaddr *stringToAddress(char *addr, struct sockaddr *sock)
     }
 #elif defined AF_PACKET
     struct sockaddr_ll *packetSock = (struct sockaddr_ll *)sock;
-    packetSock->sdl_len = sizeof(struct sockaddr_ll);
-    packetSock->sdl_family = AF_PACKET;
+    packetSock->sll_len = sizeof(struct sockaddr_ll);
+    packetSock->sll_family = AF_PACKET;
     packetSock->sll_halen = 6;
     for (int i = 0; i < packetSock->sll_halen; i++) {
       packetSock->sll_addr[i] = (u_char)strtol(mac[i], NULL, 16);
