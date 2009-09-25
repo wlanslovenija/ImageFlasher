@@ -1,9 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef WIN32
+#include <winsock.h>
+#include <ws2tcpip.h>
+#else /* WIN32 */
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#endif /* WIN32 */
 
 #ifdef AF_LINK
 #include <net/if_dl.h>
@@ -47,21 +53,23 @@ char *familyToString(struct sockaddr *sock, char *family)
   }
 #endif /* AF_PACKET */
   else {
-    strcpy(family, "unsupported");
+    sprintf(family, "unsupported (%d)", sock->sa_family);
   }
   return family;
 }
 
 struct sockaddr *stringToAddress(char *addr, struct sockaddr *sock)
 {
-  memset(sock, 0, sizeof(struct sockaddr));
   char mac[6][3];
   int length;
   struct addrinfo *res;
   if ((sscanf(addr, "%2[a-fA-F0-9]:%2[a-fA-F0-9]:%2[a-fA-F0-9]:%2[a-fA-F0-9]:%2[a-fA-F0-9]:%2[a-fA-F0-9]%n", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5], &length) == 6) && (strlen(addr) == length)) {
 #ifdef AF_LINK
     struct sockaddr_dl *linkSock = (struct sockaddr_dl *)sock;
+    memset(sock, 0, sizeof(struct sockaddr_dl));
+#ifdef HAVE_SOCKADDR_DL_SDL_LEN
     linkSock->sdl_len = sizeof(struct sockaddr_dl);
+#endif /* HAVE_SOCKADDR_DL_SDL_LEN */
     linkSock->sdl_family = AF_LINK;
     linkSock->sdl_alen = 6;
     for (int i = 0; i < linkSock->sdl_alen; i++) {
@@ -69,7 +77,9 @@ struct sockaddr *stringToAddress(char *addr, struct sockaddr *sock)
     }
 #elif defined AF_PACKET
     struct sockaddr_ll *packetSock = (struct sockaddr_ll *)sock;
+#ifdef HAVE_SOCKADDR_LL_SLL_LEN
     packetSock->sll_len = sizeof(struct sockaddr_ll);
+#endif /* HAVE_SOCKADDR_LL_SLL_LEN */
     packetSock->sll_family = AF_PACKET;
     packetSock->sll_halen = 6;
     for (int i = 0; i < packetSock->sll_halen; i++) {
@@ -93,8 +103,9 @@ char *addressToString(struct sockaddr *sock, char *addr)
     strcpy(addr, "N/A");
   }
   else if ((sock->sa_family == AF_INET) || (sock->sa_family == AF_INET6)) {
-    if (getnameinfo(sock, sizeof(struct sockaddr), addr, NI_MAXHOST, NULL, 0, NI_NUMERICHOST) != 0) {
-      strcpy(addr, "error");
+    int err;
+    if ((err = getnameinfo(sock, (sock->sa_family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6), addr, NI_MAXHOST, NULL, 0, NI_NUMERICHOST)) != 0) {
+      sprintf(addr, "error (%s)", gai_strerror(err));
     }
   }
 #ifdef AF_LINK
@@ -127,7 +138,7 @@ char *addressToString(struct sockaddr *sock, char *addr)
   }
 #endif /* AF_PACKET */
   else {
-    strcpy(addr, "unsupported");
+    sprintf(addr, "unsupported (%d)", sock->sa_family);
   }
   return addr;
 }

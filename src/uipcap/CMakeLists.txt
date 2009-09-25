@@ -17,6 +17,21 @@ set(uipcap_HDRS
   uip-conf.h
 )
 
+INCLUDE(CheckStructHasMember)
+
+set(HAVE_SOCKADDR_DL_SDL_LEN_HDRS
+  sys/types.h
+  net/if_dl.h
+)
+
+set(HAVE_SOCKADDR_LL_SLL_LEN_HDRS
+  sys/types.h
+  netpacket/packet.h
+)
+
+CHECK_STRUCT_HAS_MEMBER("struct sockaddr_dl" sdl_len "${HAVE_SOCKADDR_DL_SDL_LEN_HDRS}" HAVE_SOCKADDR_DL_SDL_LEN)
+CHECK_STRUCT_HAS_MEMBER("struct sockaddr_ll" sll_len "${HAVE_SOCKADDR_LL_SLL_LEN_HDRS}" HAVE_SOCKADDR_LL_SLL_LEN)
+
 add_library(uipcap STATIC ${uipcap_SRCS} ${uipcap_HDRS} ${uip_SRCS})
 target_link_libraries(uipcap pcap)
 
