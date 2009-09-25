@@ -77,6 +77,7 @@ struct sockaddr *stringToAddress(char *addr, struct sockaddr *sock)
     }
 #elif defined AF_PACKET
     struct sockaddr_ll *packetSock = (struct sockaddr_ll *)sock;
+    memset(sock, 0, sizeof(struct sockaddr_ll));
 #ifdef HAVE_SOCKADDR_LL_SLL_LEN
     packetSock->sll_len = sizeof(struct sockaddr_ll);
 #endif /* HAVE_SOCKADDR_LL_SLL_LEN */
@@ -85,6 +86,8 @@ struct sockaddr *stringToAddress(char *addr, struct sockaddr *sock)
     for (int i = 0; i < packetSock->sll_halen; i++) {
       packetSock->sll_addr[i] = (u_char)strtol(mac[i], NULL, 16);
     }
+#else /* AF_LINK || AF_PACKET */
+    return NULL;
 #endif /* AF_LINK || AF_PACKET */
   }
   else if (getaddrinfo(addr, NULL, NULL, &res) == 0) {
