@@ -1,6 +1,6 @@
 find_package(PCAP REQUIRED)
 
-include_directories(${PCAP_INCLUDE_DIRS} ${CMAKE_HOME_DIRECTORY}/libs/uip/pcap ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${PCAP_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 link_directories(${PCAP_LIBRARIES})
 
 set(uip_SRCS
@@ -13,7 +13,8 @@ set(uipcap_SRCS
 )
 
 set(uipcap_HDRS
-  uipcap.cpp
+  uipcap.h
+  uip-conf.h
 )
 
 add_library(uipcap STATIC ${uipcap_SRCS} ${uipcap_HDRS} ${uip_SRCS})

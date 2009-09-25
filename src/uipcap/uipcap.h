@@ -20,16 +20,18 @@ public:
   bool isLoopback();
 };
 
+typedef void (*uipcapLogCallback)(const char *);
 typedef void (*uipcapErrorCallback)(const char *);
 
 class UIPCap {
-private:
-  UIPCapInterface *allInterfaces;
-  uipcapErrorCallback errorCallback;
 public:
-  UIPCap(uipcapErrorCallback errorCallback);
+  UIPCap(uipcapLogCallback logCallback, uipcapErrorCallback errorCallback);
   ~UIPCap();
   UIPCapInterface *getAllInterfaces();
+private:
+  UIPCapInterface *m_allInterfaces;
+  uipcapLogCallback m_logCallback;
+  uipcapErrorCallback m_errorCallback;
 };
 
 #endif /* UIPCAP_H_ */
