@@ -58,7 +58,7 @@ char *familyToString(struct sockaddr *sock, char *family)
   return family;
 }
 
-struct sockaddr *stringToAddress(char *addr, struct sockaddr *sock)
+struct sockaddr *stringToAddress(char *addr, struct sockaddr_storage *sock)
 {
   char mac[6][3];
   int length;
@@ -97,7 +97,7 @@ struct sockaddr *stringToAddress(char *addr, struct sockaddr *sock)
   else {
     return NULL;
   }
-  return sock;
+  return (struct sockaddr *)sock;
 }
 
 char *addressToString(struct sockaddr *sock, char *addr)
@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
   }
 
   char *connectInterface = argv[1];
-  struct sockaddr connectSock;
+  struct sockaddr_storage connectSock;
   if (stringToAddress(argv[2], &connectSock) == NULL) {
     fprintf(stderr, "Invalid destination argument '%s'.\n", argv[2]);
     usage(argv[0]);
@@ -211,7 +211,7 @@ int main(int argc, char *argv[])
   }
 
   char addr[NI_MAXHOST] = "";
-  printf("Destination: %s\n", addressToString(&connectSock, addr));
+  printf("Destination: %s\n", addressToString((struct sockaddr *)&connectSock, addr));
 
   delete uipcap;
 
