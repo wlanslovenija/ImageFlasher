@@ -160,9 +160,17 @@ void usage(char *program)
 
 int main(int argc, char *argv[])
 {
+#ifdef WIN32
+  WSADATA wsaData;
+  if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0) {
+    fprintf("Error initializing Winsock.\n");
+    return 1;
+  }
+#endif
+
   if (argc != 4) {
     usage(argv[0]);
-    return 1;
+    return 2;
   }
 
   char *connectInterface = argv[1];
@@ -170,13 +178,13 @@ int main(int argc, char *argv[])
   if (stringToAddress(argv[2], &connectSock) == NULL) {
     fprintf(stderr, "Invalid destination argument '%s'.\n", argv[2]);
     usage(argv[0]);
-    return 1;
+    return 2;
   }
   struct addrinfo *res;
   if (getaddrinfo(NULL, argv[3], NULL, &res) != 0) {
     fprintf(stderr, "Invalid port argument '%s'.\n", argv[3]);
     usage(argv[0]);
-    return 1;
+    return 2;
   }
   int connectPort;
   if (res->ai_addr->sa_family == AF_INET) {
@@ -189,7 +197,7 @@ int main(int argc, char *argv[])
     fprintf(stderr, "Invalid port argument '%s'.\n", argv[3]);
     usage(argv[0]);
     freeaddrinfo(res);
-    return 1;
+    return 2;
   }
   freeaddrinfo(res);
 
@@ -217,7 +225,7 @@ int main(int argc, char *argv[])
   if (!validInterface) {
     fprintf(stderr, "Interface '%s' not available.\n", connectInterface);
     delete uipcap;
-    return 2;
+    return 3;
   }
 
   char addr[NI_MAXHOST] = "";

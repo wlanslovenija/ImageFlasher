@@ -1,7 +1,7 @@
 #ifndef UIPCAP_H_
 #define UIPCAP_H_
 
-#include <pcap/pcap.h>
+#include <pcap.h>
 
 class UIPCapAddress : pcap_addr {
 public:
