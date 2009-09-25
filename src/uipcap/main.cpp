@@ -9,6 +9,7 @@
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT WINVER
 #endif
+#include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #else /* WIN32 */
@@ -177,12 +178,12 @@ int main(int argc, char *argv[])
     usage(argv[0]);
     return 1;
   }
-  int connectPort;
+  in_port_t connectPort;
   if (res->ai_addr->sa_family == AF_INET) {
-    connectPort = ((struct sockaddr_in *)res)->sin_port;
+    connectPort = ((struct sockaddr_in *)res->ai_addr)->sin_port;
   }
   else if (res->ai_addr->sa_family == AF_INET6) {
-    connectPort = ((struct sockaddr_in6 *)res)->sin6_port;
+    connectPort = ((struct sockaddr_in6 *)res->ai_addr)->sin6_port;
   }
   else {
     fprintf(stderr, "Invalid port argument '%s'.\n", argv[3]);
