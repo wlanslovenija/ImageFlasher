@@ -42,20 +42,12 @@ public:
      * Returns the plan.
      */
     Plan *getPlan() const;
-private slots:
-    /**
-     * This slot gets called when the current step has changed.
-     *
-     * @param id New step identifier
-     */
-    void slotStepChanged(int id);
 private:
     // Mapping between string page ids and numeric ids
     QMap<QString, int> m_steps;
     
     // The wizard plan
     Plan m_plan;
-    Plan::Iterator m_currentStep;
 };
 
 /**

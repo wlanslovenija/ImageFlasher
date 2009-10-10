@@ -10,10 +10,6 @@ FlashWizard::FlashWizard()
     
   // Initialize the plan
   m_plan.append("init");
-  m_currentStep = m_plan.begin();
-  
-  // Connect signals
-  connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(slotStepChanged(int)));
 }
 
 void FlashWizard::addPage(Step *page)
@@ -31,31 +27,24 @@ void FlashWizard::addPage(Step *page)
 
 int FlashWizard::nextId() const
 {
-  if (m_currentStep + 1 == m_plan.end())
+  QString currentId = static_cast<Step*>(currentPage())->getId();
+  int currentIdx = m_plan.indexOf(currentId);
+  Plan::ConstIterator current = m_plan.begin() + currentIdx;
+  
+  // Check for invalid plans
+  if (currentIdx == -1)
+    qFatal("Current step (%s) cannot be found in active plan! Bailing out as this plan is invalid!", currentId.toAscii().data());
+  
+  // Check for last page
+  if (current + 1 == m_plan.end())
     return -1;
   
-  return m_steps[*(m_currentStep + 1)];
+  return m_steps[*(current + 1)];
 }
 
 Plan *FlashWizard::getPlan() const
 {
   return const_cast<Plan*>(&m_plan);
-}
-
-void FlashWizard::slotStepChanged(int id)
-{
-  if (id == m_steps["init"]) {
-    // Wizard started
-    m_currentStep = m_plan.begin();
-  } else if (id == -1) {
-    // TODO Wizard aborted
-  } else if (id == m_steps[*(m_currentStep + 1)]) {
-    // We have moved forward
-    m_currentStep++;
-  } else if (id == m_steps[*(m_currentStep - 1)]) {
-    // We have moved backward
-    m_currentStep--;
-  }
 }
 
 Step::Step(const QString &id)
