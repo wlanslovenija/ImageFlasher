@@ -16,7 +16,8 @@ void WelcomeStep::initializePage()
   // this API, wizard steps should use standard Qt wizard API (eg. for
   // validation, marking fields as mandatory, marking pages as points of
   // no return, ...).
-  plan()->append("sample-2");
   plan()->append("sample-1");
+  plan()->append("sample-2");
+  plan()->append("sample-3");
 }
 

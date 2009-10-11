@@ -22,6 +22,10 @@ public:
      * @param image Image resource location
      */
     InstructionsStep(const QString &stepId, const QString &title, const QString &instructions, const QString &image);
+
+protected:
+    void addWidget(QWidget* widget);
+
 private:
     // Instructions step GUI layout
     Ui::InstructionsStep m_ui;

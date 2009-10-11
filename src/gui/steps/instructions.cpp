@@ -22,3 +22,8 @@ InstructionsStep::InstructionsStep(const QString &stepId, const QString &title, 
   }
 
 }
+
+void InstructionsStep::addWidget(QWidget* widget) {
+  m_ui.container->addWidget(widget);
+}
+

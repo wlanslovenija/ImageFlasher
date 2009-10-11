@@ -38,7 +38,7 @@ int FlashWizard::nextId() const
   // Check for last page
   if (current + 1 == m_plan.end())
     return -1;
-  
+  //printf("%d \n", m_currentStep);
   return m_steps[*(current + 1)];
 }
 

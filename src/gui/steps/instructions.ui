@@ -2,9 +2,6 @@
 <ui version="4.0">
  <class>InstructionsStep</class>
   <widget class="QWizardPage" name="instructionsPage">
-   <property name="title">
-    <string>Instructions</string>
-   </property>
    <layout class="QVBoxLayout" name="verticalLayout_5">
     <item>
      <widget class="QLabel" name="instructions">
@@ -15,6 +12,10 @@
        <bool>true</bool>
       </property>
      </widget>
+    </item>
+    <item>
+      <layout class="QVBoxLayout" name="container">
+      </layout>
     </item>
     <item>
      <widget class="QLabel" name="image">

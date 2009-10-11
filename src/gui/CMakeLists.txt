@@ -4,12 +4,14 @@ set(gui_SRCS
   wizard.cpp
   steps/welcome.cpp
   steps/instructions.cpp
+  steps/selection.cpp
 )
 
 set(gui_HDRS
   wizard.h
   steps/welcome.h
   steps/instructions.h
+  steps/selection.h
 )
 
 set(gui_UIS
