@@ -19,5 +19,6 @@ void WelcomeStep::initializePage()
   plan()->append("sample-1");
   plan()->append("sample-2");
   plan()->append("sample-3");
+  plan()->append("sample-4");
 }
 

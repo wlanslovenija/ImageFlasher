@@ -25,7 +25,7 @@ public:
 
 protected:
     void addWidget(QWidget* widget);
-
+    void addLayout(QLayout* layout);
 private:
     // Instructions step GUI layout
     Ui::InstructionsStep m_ui;

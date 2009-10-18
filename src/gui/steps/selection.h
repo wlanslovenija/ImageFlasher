@@ -27,7 +27,7 @@ public:
     int getSelection();
 
 private:
-    QComboBox* m_selector;
+    QComboBox m_selector;
 
 };
 
