@@ -17,10 +17,10 @@ public:
     ~FilesList();
     void addFile(const QString &title, bool required, ValidatorCallback validator);
     void addFile(const QString &title, bool required) { addFile(title, required, NULL); }
-    int getCount();
-    QString getTitle(int i);
-    bool isRequired(int i);
-    bool isValid(int i, const QString &file);
+    int getCount() const;
+    QString getTitle(int i) const;
+    bool isRequired(int i) const;
+    bool isValid(int i, const QString &file) const;
 private:
 
     QList<bool> m_requiredList;
@@ -47,11 +47,12 @@ public:
 
     QString getFile(int i);
 
-    virtual bool isComplete();
+    virtual bool isComplete() const;
 private:
 
     FilesList m_list;
     QList<FileChooser*> m_choosers;
+    QList<QLabel*> m_notices;
     QWidget m_panel;
 
 private slots:
