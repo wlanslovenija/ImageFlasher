@@ -33,8 +33,6 @@ int main(int argc, char *argv[])
   w.addPage(new FilesStep("sample-3", "Sample file form", "Fill the form", "state_select.png", files));
   w.addPage(new ProgressStep("sample-4", "Sample progress", "Progress", "state_install.png"));
 
-
   w.show();
-  
   return a.exec();
 }

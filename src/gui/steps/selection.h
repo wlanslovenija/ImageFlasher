@@ -4,9 +4,9 @@
 #ifndef GUI_STEPS_SELECTIONSTEP_H
 #define GUI_STEPS_SELECTIONSTEP_H
 
-#include "instructions.h"
-#include <QComboBox>
+#include "gui/steps/instructions.h"
 
+class QComboBox;
 
 /**
  * The instructions step.
@@ -25,10 +25,8 @@ public:
     SelectionStep(const QString &stepId, const QString &title, const QString &instructions, const QString &image, QStringList items);
 
     int getSelection();
-
 private:
-    QComboBox m_selector;
-
+    QComboBox *m_selector;
 };
 
 #endif

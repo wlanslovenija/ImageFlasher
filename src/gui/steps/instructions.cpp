@@ -18,16 +18,16 @@ InstructionsStep::InstructionsStep(const QString &stepId, const QString &title, 
 <p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\":/{{image}}\" /></p></body></html>");
     html->replace("{{image}}", image);
     m_ui.image->setText(*html);
-
   }
-
 }
 
-void InstructionsStep::addWidget(QWidget* widget) {
+void InstructionsStep::addWidget(QWidget* widget)
+{
   m_ui.container->addWidget(widget);
 }
 
-void InstructionsStep::addLayout(QLayout* layout) {
+void InstructionsStep::addLayout(QLayout* layout)
+{
   m_ui.container->addItem(layout);
 }
 

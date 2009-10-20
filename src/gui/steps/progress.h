@@ -4,17 +4,16 @@
 #ifndef GUI_STEPS_PROGRESSSTEP_H
 #define GUI_STEPS_PROGRESSSTEP_H
 
-#include "instructions.h"
+#include "gui/steps/instructions.h"
 #include <QProgressBar>
 
 class ProgressBar : public QProgressBar {
- Q_OBJECT
+    Q_OBJECT
 public:
-    ProgressBar(QWidget *parent = 0) : QProgressBar(parent) {};
+    ProgressBar(QWidget *parent = 0);
 
     virtual QString text() const;
     void setText(const QString &text);
-
 private:
     QString m_text;
 };
@@ -41,10 +40,10 @@ public slots:
     void setProgress(int progress);
     void setMessage(const QString &message);
     void setBusy();
-
 private:
-    ProgressBar m_progress;
+    ProgressBar *m_progress;
     int m_max, m_min;
 };
 
 #endif
+
