@@ -42,6 +42,13 @@ public:
      * Returns the plan.
      */
     Plan *getPlan() const;
+
+protected slots:
+
+    void handlePageChange(int id);
+
+    void handleCustomButton(int id);
+
 private:
     // Mapping between string page ids and numeric ids
     QMap<QString, int> m_steps;
@@ -73,6 +80,25 @@ public:
      * Returns this step's identifier.
      */
     QString getId() const;
+
+    /**
+     * Returns true if this step can provide more information. A "More" button is displayed by the wizard,
+     * clicking it triggers toggleMoreInformation function. The default implementation returns false.
+     */
+    virtual bool hasMoreInformation();
+
+    /**
+     * If overriden, this function handles toggling of more/less information verbosity of the slide. The
+     * default implementation always returns false.
+     */
+    virtual bool toggleMoreInformation();
+
+    /**
+     * Returns the current more/less information verbosity state of the slide. The
+     * default implementation always returns false.
+     */
+    virtual bool testMoreInformation();
+
 protected:
     /**
      * A convenience method for accessing the flash wizard instance.
@@ -83,6 +109,7 @@ protected:
      * Returns a modifiable plan.
      */
     Plan *plan() const;
+
 private:
     // Step identifier
     QString m_id;

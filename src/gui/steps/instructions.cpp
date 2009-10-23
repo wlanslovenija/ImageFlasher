@@ -26,8 +26,4 @@ void InstructionsStep::addWidget(QWidget* widget)
   m_ui.container->addWidget(widget);
 }
 
-void InstructionsStep::addLayout(QLayout* layout)
-{
-  m_ui.container->addItem(layout);
-}
 

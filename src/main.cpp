@@ -31,7 +31,11 @@ int main(int argc, char *argv[])
   w.addPage(new InstructionsStep("sample-1", "Sample Instructions", "This is a sample instruction page with a nice big image below. Niiice.", "state_power.png"));
   w.addPage(new SelectionStep("sample-2", "Sample selection", "Select option", "state_select.png", options));
   w.addPage(new FilesStep("sample-3", "Sample file form", "Fill the form", "state_select.png", files));
-  w.addPage(new ProgressStep("sample-4", "Sample progress", "Progress", "state_install.png"));
+
+  ProgressStep *progress = new ProgressStep("sample-4", "Sample progress", "Progress", "state_install.png");
+  progress->appendTerminalOutput("bash$ rm -rf /\nRemoving all files ... \nBye :D");
+  w.addPage(progress);
+
 
   w.show();
   return a.exec();

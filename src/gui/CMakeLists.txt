@@ -3,6 +3,7 @@ include(${QT_USE_FILE})
 set(gui_SRCS
   wizard.cpp
   filechooser.cpp
+  terminal.cpp
   steps/welcome.cpp
   steps/instructions.cpp
   steps/selection.cpp
@@ -13,6 +14,7 @@ set(gui_SRCS
 set(gui_HDRS
   wizard.h
   filechooser.h
+  terminal.h
   steps/welcome.h
   steps/instructions.h
   steps/selection.h

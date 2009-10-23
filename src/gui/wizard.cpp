@@ -6,6 +6,11 @@
 FlashWizard::FlashWizard()
   : QWizard()
 {
+  setButtonText(QWizard::CustomButton1, tr("More"));
+
+  connect( this, SIGNAL( currentIdChanged ( int ) ), this, SLOT( handlePageChange( int ) ) );
+  connect( this, SIGNAL( customButtonClicked ( int ) ), this, SLOT( handleCustomButton( int ) ) );
+
   resize(640, 480);
     
   // Initialize the plan
@@ -42,6 +47,44 @@ int FlashWizard::nextId() const
   return m_steps[*(current + 1)];
 }
 
+
+void FlashWizard::handlePageChange(int id) {
+  if (id < 0)
+    return;
+
+  Step *step = (Step*) currentPage();
+
+  QList<QWizard::WizardButton> layout;
+  layout << QWizard::Stretch << QWizard::BackButton << QWizard::NextButton <<
+         QWizard::FinishButton << QWizard::CancelButton;
+
+  if (step->hasMoreInformation()) {
+    //setOption(QWizard::HaveCustomButton1, false);
+    layout.prepend(QWizard::CustomButton1);
+  } 
+
+  setButtonLayout(layout);
+
+  bool more = step->testMoreInformation();
+  
+  setButtonText(QWizard::CustomButton1, more ? tr("Less") : tr("More"));
+
+}
+
+void FlashWizard::handleCustomButton(int id) {
+  if (id != QWizard::CustomButton1) 
+    return;
+
+  Step *step = (Step*) currentPage();
+
+  if (!step->hasMoreInformation())
+    return;
+
+  bool more = step->toggleMoreInformation();
+  
+  setButtonText(QWizard::CustomButton1, more ? tr("Less") : tr("More"));
+}
+
 Plan *FlashWizard::getPlan() const
 {
   return const_cast<Plan*>(&m_plan);
@@ -70,5 +113,17 @@ FlashWizard *Step::flashWizard() const
 Plan *Step::plan() const
 {
   return flashWizard()->getPlan();
+}
+
+bool Step::hasMoreInformation() {
+  return false;
+}
+
+bool Step::toggleMoreInformation() {
+  return false;
+}
+
+bool Step::testMoreInformation() {
+  return false;
 }
 

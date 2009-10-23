@@ -32,6 +32,9 @@ ProgressStep::ProgressStep(const QString &stepId, const QString &title, const QS
   setMessage("Processing");
   setBusy();
 
+  m_ui.cards->addWidget(&m_terminal);
+  m_ui.cards->setCurrentIndex(0);
+
   emit completeChanged();
 }
 
@@ -66,5 +69,22 @@ void ProgressStep::setBusy()
 bool ProgressStep::isComplete() const
 {
   return m_progress->value() >= m_progress->maximum();
+}
+
+bool ProgressStep::hasMoreInformation() {
+  return true;
+}
+
+bool ProgressStep::toggleMoreInformation() {
+  m_ui.cards->setCurrentIndex(testMoreInformation() ? 0 : m_ui.cards->indexOf(&m_terminal));
+  return testMoreInformation();
+}
+
+bool ProgressStep::testMoreInformation() {
+  return m_ui.cards->currentIndex() == m_ui.cards->indexOf(&m_terminal);
+}
+
+void ProgressStep::appendTerminalOutput(const QString &text) {
+  m_terminal.append(text);
 }
 

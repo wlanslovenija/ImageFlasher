@@ -18,6 +18,8 @@
       </layout>
     </item>
     <item>
+      <layout class="QStackedLayout" name="cards">
+      <item>
      <widget class="QLabel" name="image">
       <property name="sizePolicy">
        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
@@ -32,6 +34,8 @@
        <set>Qt::AlignCenter</set>
       </property>
      </widget>
+     </item>
+     </layout>
     </item>
    </layout>
   </widget>
