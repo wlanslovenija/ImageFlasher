@@ -12,8 +12,19 @@ set FLASHER_DEFAULT_IP 192.168.1.254
 set FONERA_CURRENT_IP_MASK 192.168.1.1/24
 set FLASHER_CURRENT_IP 192.168.1.254
 
-set ROOT_FILENAME openwrt-atheros-root.jffs2-64k
-set KERNEL_FILENAME openwrt-atheros-vmlinux.lzma
+if { ( [string first "kernel" [lindex $argv 0]] != -1 ) && ( [string first "root" [lindex $argv 1]] != -1 ) } {
+	set KERNEL_FILENAME [lindex $argv 0]
+	set ROOT_FILENAME [lindex $argv 1]
+} elseif { ( [string first "root" [lindex $argv 0]] != -1 ) && ( [string first "kernel" [lindex $argv 1]] != -1 ) } {
+	set KERNEL_FILENAME [lindex $argv 1]
+	set ROOT_FILENAME [lindex $argv 0]
+} else {
+	send_user "Invalid program arguments.\n"
+	exit 1
+}
+
+send_user "Using root image: $ROOT_FILENAME\n"
+send_user "Using kernel image: $KERNEL_FILENAME\n"
 
 system ping -n -o $FONERA_LISTEN_IP
 

@@ -15,12 +15,23 @@ set FLASHER_DEFAULT_IP 192.168.1.254
 set FONERA_CURRENT_IP_MASK 192.168.10.100/24
 set FLASHER_CURRENT_IP 192.168.10.1
 
-set ROOT_FILENAME openwrt-atheros-root.jffs2-64k
-set KERNEL_FILENAME openwrt-atheros-vmlinux.lzma
+if { ( [string first "kernel" [lindex $argv 0]] != -1 ) && ( [string first "root" [lindex $argv 1]] != -1 ) } {
+	set KERNEL_FILENAME [lindex $argv 0]
+	set ROOT_FILENAME [lindex $argv 1]
+} elseif { ( [string first "root" [lindex $argv 0]] != -1 ) && ( [string first "kernel" [lindex $argv 1]] != -1 ) } {
+	set KERNEL_FILENAME [lindex $argv 1]
+	set ROOT_FILENAME [lindex $argv 0]
+} else {
+	send_user "Invalid program arguments.\n"
+	exit 1
+}
+
+send_user "Using root image: $ROOT_FILENAME\n"
+send_user "Using kernel image: $KERNEL_FILENAME\n"
 
 spawn cu --parity=none -s 9600 --nostop -l $SERIAL_PORT_FILE
 set timeout 3600
-set send_slow { 5 .05 }
+set send_slow { 1 .05 }
 expect "enter ^C to abort"
 send \003
 expect "RedBoot>"
