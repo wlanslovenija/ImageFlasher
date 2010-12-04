@@ -1,0 +1,49 @@
+#!/usr/bin/expect -f
+#
+# Unlocs RedBoot on Fonera
+#
+
+# TODO Find serial port device filename
+set SERIAL_PORT_FILE /dev/tty.PL2303-0000101D
+
+# It configures the same IP addresses as Fonera+ has by default
+set FONERA_LISTEN_IP 192.168.1.1
+set FONERA_LISTEN_MASK 255.255.255.0
+set FLASHER_DEFAULT_IP 192.168.1.254
+
+spawn cu --parity=none -s 9600 --nostop -l $SERIAL_PORT_FILE
+set timeout 3600
+set send_slow { 1 .05 }
+expect "enter ^C to abort"
+send \003
+expect "RedBoot>"
+send -s -- "fconfig boot_script_timeout 10\r"
+expect {
+	"(y/n)?"	{ send -s -- "y\r" ; exp_continue}
+	"RedBoot>"
+}
+send -s -- "fconfig bootp_my_ip $FONERA_LISTEN_IP\r"
+expect {
+	"(y/n)?"	{ send -s -- "y\r" ; exp_continue }
+	"RedBoot>"
+}
+send -s -- "fconfig bootp_my_ip_mask $FONERA_LISTEN_MASK\r"
+expect {
+	"(y/n)?"	{ send -s -- "y\r" ; exp_continue }
+	"RedBoot>"
+}
+send -s -- "fconfig bootp_server_ip $FLASHER_DEFAULT_IP\r"
+expect {
+	"(y/n)?"	{ send -s -- "y\r" ; exp_continue }
+	"RedBoot>"
+}
+send -s -- "fconfig boot_script_data\r"
+expect ">>"
+send -s -- "fis load -l vmlinux.bin.l7\r"
+send -s -- "exec\r"
+send -s -- "\r"
+expect {
+	"(y/n)?"	{ send -s -- "y\r" ; exp_continue }
+	"RedBoot>"
+}
+sleep 1
