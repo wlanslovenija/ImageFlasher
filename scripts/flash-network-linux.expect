@@ -26,9 +26,7 @@ if { ( [string first "kernel" [lindex $argv 0]] != -1 ) && ( [string first "root
 send_user "Using root image: $ROOT_FILENAME\n"
 send_user "Using kernel image: $KERNEL_FILENAME\n"
 
-while { { system ping -c 1 -w 1 -W 1 -o $FONERA_LISTEN_IP} != 0 } {
-	send_user "Waiting for router.\n"
-}
+system "while ! ping -c 1 -w 1 -W 1 -n $FONERA_LISTEN_IP > /dev/null; do echo 'Waiting for router.'; sleep 1; done"
 
 spawn telnet $FONERA_LISTEN_IP 9000
 set timeout 3600
