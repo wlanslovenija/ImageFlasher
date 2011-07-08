@@ -3,4 +3,4 @@ syntax: regexp
 syntax: glob
 .*
 syntax: regexp
-^lib/lwip/build
+^lib/lwip/bin
