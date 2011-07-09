@@ -7,5 +7,5 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 include_directories (src/include test/unit)
 add_subdirectory (src)
 
-add_subdirectory (test/unit)
+# add_subdirectory (test/unit)
 
