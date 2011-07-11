@@ -111,6 +111,16 @@ low_level_init(struct netif *netif)
     return;
   }
 
+  lwipcap_addr_t lwipaddr = get_if_addrs((lwipcap_if_t*) pcapif->pc_descr);
+
+  netif->ip_addr = htons(get_addr(lwipaddr));
+
+  netif->netmask = htons(get_netmask(lwipaddr));
+  
+  /*set the mac address*/
+
+
+
   /*
     -> How to get the IP address of the interface (consider pcap_findalldevs())
     -> How to get the MAC address of the device that pcap has opened
@@ -338,7 +348,6 @@ pcapif_init(struct netif *netif)
    * of bits per second.
    */
 
-  // This needs to be taken care of
   NETIF_INIT_SNMP(netif, snmp_ifType_ethernet_csmacd, LINK_SPEED_OF_YOUR_NETIF_IN_BPS);
 
   netif->state = pcapif;
@@ -350,7 +359,8 @@ pcapif_init(struct netif *netif)
    * from it if you have to do some checks before sending (e.g. if link
    * is available...) */
 
-  //This needs to be taken care of
+  /* Currently we assume ethernet */
+
 #if NO_SYS==1
   netif->input=tcpip_input;
 #else
