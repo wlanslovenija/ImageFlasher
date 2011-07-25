@@ -667,7 +667,6 @@ etharp_ip_input(struct netif *netif, struct pbuf *p)
 static void
 etharp_arp_input(struct netif *netif, struct eth_addr *ethaddr, struct pbuf *p)
 {
-  printf("in arp\n");
   struct etharp_hdr *hdr;
   struct eth_hdr *ethhdr;
   /* these are aligned properly, whereas the ARP header fields might not be */
@@ -1219,7 +1218,6 @@ etharp_request(struct netif *netif, ip_addr_t *ipaddr)
 err_t
 ethernet_input(struct pbuf *p, struct netif *netif)
 {
-  printf("Enter ethernet_input\n");
   struct eth_hdr* ethhdr;
   u16_t type;
   s16_t ip_hdr_offset = SIZEOF_ETH_HDR;

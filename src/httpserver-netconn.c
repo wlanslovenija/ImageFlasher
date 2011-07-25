@@ -46,7 +46,6 @@ http_server_netconn_serve(struct netconn *conn)
       printf(" Recieved a proper HTTP request sending out the http headers\n");
       int ret = netconn_write(conn, http_html_hdr, sizeof(http_html_hdr)-1, NETCONN_NOCOPY);
       
-      printf(" Abra = %d\n",sizeof(http_html_hdr)-1);
       /* Send our HTML page */
       netconn_write(conn, http_index_html, sizeof(http_index_html)-1, NETCONN_NOCOPY);
     }

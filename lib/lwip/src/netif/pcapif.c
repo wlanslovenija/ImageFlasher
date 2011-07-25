@@ -94,7 +94,7 @@ struct pcapif {
 static void  pcapif_input(struct netif *netif);
 static void  pcapif_loop_init(struct netif *netif);
 
-void checkfunc(u_char *, const struct pcap_pkthdr*, const u_char *);
+void pkt_hndlr(u_char *, const struct pcap_pkthdr*, const u_char *);
 
 /**
  * In this function, the hardware should be initialized.
@@ -123,7 +123,7 @@ low_level_init(struct netif *netif)
   pcapif->pc_descr = pcap_open_live(pcapif->iface,SNAPLEN,0,100,pcapif->errbuf);
 
   if(pcapif->pc_descr == (pcap_t *)NULL){
-    printf(" pcap_open_live : %s\n", pcapif->errbuf);
+    error(" pcap_open_live : %s\n", pcapif->errbuf);
     return;
   }
   
@@ -179,10 +179,7 @@ low_level_output(struct netif *netif, struct pbuf *p)
     /* Send the data from the pbuf to the interface, one pbuf at a
        time. The size of the data in each pbuf is kept in the ->len
        variable. */
-    printf(" %c %c \n",netif->name[0], netif->name[1]);
     int ret = pcap_inject(pcapif->pc_descr,q->payload,q->len);
-//DEBUG 
-      printf("pcapinject : %d\n",ret);
     if(ret == -1)
       pcap_perror(pcapif->pc_descr,"pcap_inject");
   }
@@ -412,7 +409,7 @@ void init_ll(struct netif *netif)
 
 void pcapif_loop_init(struct netif *netif)
 {
-  printf("\n\n\npcap_loop_init : starting\n\n\n");
+  //printf("\n\n\npcap_loop_init : starting\n\n\n");
 
   struct pcapif *pcapif = netif->state;
 
@@ -420,15 +417,15 @@ void pcapif_loop_init(struct netif *netif)
 
   pcap_setfilter(pcapif->pc_descr, &(pcapif->bpf_prog));
 
-  if(pcap_loop(pcapif->pc_descr, -1, checkfunc, (u_char *)netif) == -1){
+  if(pcap_loop(pcapif->pc_descr, -1, pkt_hndlr, (u_char *)netif) == -1){
     printf("pcap_loop : error\n");
   }
 
 }
 
-void checkfunc(u_char *pcif, const struct pcap_pkthdr *hdr, const u_char * pkt)
+void pkt_hndlr(u_char *pcif, const struct pcap_pkthdr *hdr, const u_char * pkt)
 {
-  printf(" Recieved a packet\n");
+  //printf(" Recieved a packet\n");
   struct netif *netif = pcif;
   struct pbuf *pktbuf = pbuf_alloc(PBUF_LINK, hdr->len,PBUF_RAM);
   pktbuf->payload = pkt;

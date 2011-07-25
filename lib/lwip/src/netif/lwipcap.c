@@ -31,7 +31,6 @@ lwipcap_addr_t* get_next_addr(lwipcap_addr_t* lwipcapaddr)
 struct sockaddr* get_addr(lwipcap_addr_t* lwipaddr)
 {
   struct pcap_addr *temp = lwipaddr;
-  printf("alive %d \n", temp);
   return temp->addr;
 }
 

@@ -13,9 +13,9 @@ static void testclient(void* arg)
 
   client = netconn_new(NETCONN_TCP);
 
-  printf("Now!\n");
-  printf("Error : %d\n",netconn_connect(client, NULL, htons(1234))); 
-
+//  printf("Now!\n");
+//  printf("Error : %d\n",netconn_connect(client, NULL, htons(1234))); 
+  netconn_connect(client, NULL, htons(1234));
 
   sleep(1000);
   netconn_recv(client, &recvbuf);
