@@ -1051,12 +1051,14 @@ do_disconnect(struct api_msg_msg *msg)
 void
 do_listen(struct api_msg_msg *msg)
 {
+
   if (ERR_IS_FATAL(msg->conn->last_err)) {
     msg->err = msg->conn->last_err;
   } else {
     msg->err = ERR_CONN;
     if (msg->conn->pcb.tcp != NULL) {
       if (msg->conn->type == NETCONN_TCP) {
+
         if (msg->conn->state == NETCONN_NONE) {
 #if TCP_LISTEN_BACKLOG
           struct tcp_pcb* lpcb = tcp_listen_with_backlog(msg->conn->pcb.tcp, msg->msg.lb.backlog);

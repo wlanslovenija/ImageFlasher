@@ -9,4 +9,4 @@ set(snmp_srcs
 )
 
 add_library(lwipsnmp ${snmp_srcs})
-target_link_libraries(lwipsnmp ${PROJECT_SOURCE_DIR}/src/lwipcore)
+target_link_libraries(lwipsnmp lwipcore)

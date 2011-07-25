@@ -158,7 +158,7 @@ void usage(char *program)
   fprintf(stderr, "%s <interface> <destination> <port>\n", program);
 }
 
-int main(int argc, char *argv[])
+/*int main(int argc, char *argv[])
 {
 #ifdef WIN32
   WSADATA wsaData;
@@ -235,3 +235,4 @@ int main(int argc, char *argv[])
 
   return 0;
 }
+*/

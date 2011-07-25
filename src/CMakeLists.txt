@@ -1,19 +1,23 @@
-set(QT_USE_QTNETWORK TRUE)
-set(QT_USE_QTXML TRUE)
+set (cmd_SRCS cmd.c unixlib.c)
+add_executable(cmd ${cmd_SRCS})
+add_executable(hs httpserver-netconn.c http.c unixlib.c)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR} ${QT_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR})
+add_executable(s s.c unixlib.c)
+add_executable(c c.c unixlib.c)
 
-add_subdirectory(gui)
-add_subdirectory(uipcap)
+set (liblwip 
+  lwipcap
+  lwipapi
+  lwipcore
+  lwipv4
+  lwipsnmp
+  )
 
-include(${QT_USE_FILE})
+target_link_libraries(hs ${liblwip})
+target_link_libraries(cmd ${liblwip})
+target_link_libraries(s ${liblwip})
+target_link_libraries(c ${liblwip})
 
-set(flasher_SRCS
-  main.cpp
-)
+install(TARGETS cmd DESTINATION ${CMAKE_BUILD_DIR}/cmd)
 
-qt4_add_resources(flasher_RCS ${CMAKE_HOME_DIRECTORY}/resources/wizard.qrc)
-add_executable(flasher ${flasher_RCS} ${flasher_SRCS})
-target_link_libraries(flasher gui ${QT_LIBRARIES})
 
-add_dependencies(flasher gui)

@@ -10,4 +10,4 @@ set(ipv4_srcs
 )
 
 add_library(lwipv4 ${ipv4_srcs})
-target_link_libraries(lwipv4 ${PROJECT_SOURCE_DIR}/src/core/lwipcore)
+target_link_libraries(lwipv4 lwipcore)

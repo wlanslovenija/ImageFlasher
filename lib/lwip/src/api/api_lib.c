@@ -202,7 +202,6 @@ netconn_connect(struct netconn *conn, ip_addr_t *addr, u16_t port)
   msg.msg.msg.bc.port = port;
   /* This is the only function which need to not block tcpip_thread */
   err = tcpip_apimsg(&msg);
-
   NETCONN_SET_SAFE_ERR(conn, err);
   return err;
 }

@@ -667,6 +667,7 @@ etharp_ip_input(struct netif *netif, struct pbuf *p)
 static void
 etharp_arp_input(struct netif *netif, struct eth_addr *ethaddr, struct pbuf *p)
 {
+  printf("in arp\n");
   struct etharp_hdr *hdr;
   struct eth_hdr *ethhdr;
   /* these are aligned properly, whereas the ARP header fields might not be */
@@ -764,6 +765,7 @@ etharp_arp_input(struct netif *netif, struct eth_addr *ethaddr, struct pbuf *p)
 
       LWIP_ASSERT("netif->hwaddr_len must be the same as ETHARP_HWADDR_LEN for etharp!",
                   (netif->hwaddr_len == ETHARP_HWADDR_LEN));
+      
 #if LWIP_AUTOIP
       /* If we are using Link-Local, all ARP packets that contain a Link-Local
        * 'sender IP address' MUST be sent using link-layer broadcast instead of
@@ -784,7 +786,9 @@ etharp_arp_input(struct netif *netif, struct eth_addr *ethaddr, struct pbuf *p)
          are already correct, we tested that before */
 
       /* return ARP reply */
+
       netif->linkoutput(netif, p);
+
     /* we are not configured? */
     } else if (ip_addr_isany(&netif->ip_addr)) {
       /* { for_us == 0 and netif->ip_addr.addr == 0 } */
@@ -1215,6 +1219,7 @@ etharp_request(struct netif *netif, ip_addr_t *ipaddr)
 err_t
 ethernet_input(struct pbuf *p, struct netif *netif)
 {
+  printf("Enter ethernet_input\n");
   struct eth_hdr* ethhdr;
   u16_t type;
   s16_t ip_hdr_offset = SIZEOF_ETH_HDR;

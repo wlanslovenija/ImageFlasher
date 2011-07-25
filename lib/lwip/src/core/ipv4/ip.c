@@ -338,22 +338,24 @@ ip_input(struct pbuf *p, struct netif *inp)
           ip4_addr_get_u32(&iphdr->dest) & ~ip4_addr_get_u32(&netif->netmask)));
 
       /* interface is up and configured? */
+      printf("%d && %d\n",netif_is_up(netif), (!ip_addr_isany(&(netif->ip_addr))));
       if ((netif_is_up(netif)) && (!ip_addr_isany(&(netif->ip_addr)))) {
         /* unicast to this interface address? */
+        printf(" %d , %d \n",current_iphdr_dest.addr, (netif->ip_addr).addr);
         if (ip_addr_cmp(&current_iphdr_dest, &(netif->ip_addr)) ||
             /* or broadcast on this interface network address? */
             ip_addr_isbroadcast(&current_iphdr_dest, netif)) {
-          LWIP_DEBUGF(IP_DEBUG, ("ip_input: packet accepted on interface %c%c\n",
+            LWIP_DEBUGF(IP_DEBUG, ("ip_input: packet accepted on interface %c%c\n",
               netif->name[0], netif->name[1]));
           /* break out of for loop */
           break;
-        }
+        } 
 #if LWIP_AUTOIP
         /* connections to link-local addresses must persist after changing
            the netif's address (RFC3927 ch. 1.9) */
         if ((netif->autoip != NULL) &&
             ip_addr_cmp(&current_iphdr_dest, &(netif->autoip->llipaddr))) {
-          LWIP_DEBUGF(IP_DEBUG, ("ip_input: LLA packet accepted on interface %c%c\n",
+                  LWIP_DEBUGF(IP_DEBUG, ("ip_input: LLA packet accepted on interface %c%c\n",
               netif->name[0], netif->name[1]));
           /* break out of for loop */
           break;
@@ -365,9 +367,12 @@ ip_input(struct pbuf *p, struct netif *inp)
         netif = netif_list;
       } else {
         netif = netif->next;
-      }
+      } 
       if (netif == inp) {
+        printf("netif->next %c %c\n", netif->name[0], netif->name[1]);
         netif = netif->next;
+         printf("2 . netif->next %c %c\n", netif->name[0], netif->name[1]);
+      
       }
     } while(netif != NULL);
   }

@@ -56,6 +56,12 @@
 #include "netif/ppp_oe.h"
 #include <pcap.h>
 #include <pcap-int.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <net/if.h>
+#include <string.h>
+
+#include "lwipcap.h"
 /* Define those to better describe your network interface. */
 #define IFNAME0 'p'
 #define IFNAME1 'c'
@@ -71,12 +77,14 @@ struct pcapif {
   struct eth_addr *ethaddr;
   /* Add whatever per-interface state that is needed here. */
 
-  u8_t *pref_if;                 // Preferred interface name
+  char name[10];
+  u8_t *pref_if;
   u8_t errbuf[PCAP_ERRBUF_SIZE];  // Error buffer to store pcap related errors
   pcap_t *pc_descr;         // Pcap descriptor of the interface
   u8_t *iface;
   struct pcap_pkthdr* pkthdr;
   u8_t *payload;
+  struct bpf_program bpf_prog;
 
   // Add pcap related attributes here
 
@@ -84,6 +92,9 @@ struct pcapif {
 
 /* Forward declarations. */
 static void  pcapif_input(struct netif *netif);
+static void  pcapif_loop_init(struct netif *netif);
+
+void checkfunc(u_char *, const struct pcap_pkthdr*, const u_char *);
 
 /**
  * In this function, the hardware should be initialized.
@@ -97,6 +108,10 @@ low_level_init(struct netif *netif)
 {
   struct pcapif *pcapif = netif->state;
 
+  // Remove this later
+  
+  pcapif->pref_if = malloc(strlen("vboxnet0")+1);
+  strncpy(pcapif->pref_if, "vboxnet0", strlen("vboxnet0")+1);
   if(pcapif->pref_if == NULL){
     pcapif->iface = pcap_lookupdev(pcapif->errbuf);
     if(pcapif->iface == NULL)
@@ -108,48 +123,26 @@ low_level_init(struct netif *netif)
   pcapif->pc_descr = pcap_open_live(pcapif->iface,SNAPLEN,0,100,pcapif->errbuf);
 
   if(pcapif->pc_descr == (pcap_t *)NULL){
+    printf(" pcap_open_live : %s\n", pcapif->errbuf);
     return;
   }
-
-  lwipcap_addr_t lwipaddr = get_if_addrs((lwipcap_if_t*) pcapif->pc_descr);
-
-  netif->ip_addr = htons(get_addr(lwipaddr));
-
-  netif->netmask = htons(get_netmask(lwipaddr));
   
-  /*set the mac address*/
+  /*lwipcap_addr_t *lwipaddr = get_if_addrs((lwipcap_if_t*) pcapif->pc_descr);
 
-
-
-  /*
-    -> How to get the IP address of the interface (consider pcap_findalldevs())
-    -> How to get the MAC address of the device that pcap has opened
-    -> How to determine if the device is ethernet or not to set the flags
-  */  
+  struct sockaddr *temp = get_addr(lwipaddr);
  
-  /* set MAC hardware address length */
-  netif->hwaddr_len = ETHARP_HWADDR_LEN;
+  (netif->ip_addr).addr = htonl(temp->sa_data);
 
-  /* set MAC hardware address */
-  netif->hwaddr[0] = 0;
-  netif->hwaddr[1] = 0;
-  netif->hwaddr[2] = 0;
-  netif->hwaddr[3] = 0;
-  netif->hwaddr[4] = 0;
-  netif->hwaddr[5] = 0;
-  netif->hwaddr[6] = 0;
-  netif->hwaddr[7] = 0;
-  netif->hwaddr[8] = 0;
-  netif->hwaddr[9] = 0;
-  netif->hwaddr[10] = 0;
-  netif->hwaddr[11] = 0;
+  (netif->netmask).addr = htonl(get_netmask(lwipaddr));
+ */ 
 
-  /* maximum transfer unit */
-  netif->mtu = 1500;
+  init_ll(netif);
+
+  sys_thread_new("pcap_loop_thread", pcapif_loop_init, netif, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
   
   /* device capabilities */
   /* don't set NETIF_FLAG_ETHARP if this device is not an ethernet one */
-  netif->flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
+  netif->flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP | NETIF_FLAG_UP;
  
   /* Figure out what sort of a pcap filter to set here */
 }
@@ -186,7 +179,12 @@ low_level_output(struct netif *netif, struct pbuf *p)
     /* Send the data from the pbuf to the interface, one pbuf at a
        time. The size of the data in each pbuf is kept in the ->len
        variable. */
-    pcap_inject(netif->state,q->payload,q->len);
+    printf(" %c %c \n",netif->name[0], netif->name[1]);
+    int ret = pcap_inject(pcapif->pc_descr,q->payload,q->len);
+//DEBUG 
+      printf("pcapinject : %d\n",ret);
+    if(ret == -1)
+      pcap_perror(pcapif->pc_descr,"pcap_inject");
   }
 
   // Whoa!! what is this?? ?signal that packet should be sent();
@@ -376,3 +374,63 @@ pcapif_init(struct netif *netif)
   return ERR_OK;
 }
 
+
+void init_ll(struct netif *netif)
+{
+  /* set MAC Address
+   * set MTU
+   * set netif->hwaddr_len
+   */
+
+  struct ifconf ifc;
+  struct ifreq *IFR = &(ifc.ifc_req);
+  int i,sock;
+  char buf[1024];
+  struct pcapif *pcapif = netif->state;
+
+  sock = socket(AF_INET, SOCK_DGRAM, 0);
+  ifc.ifc_len = sizeof(buf);
+  ifc.ifc_buf = buf;
+
+  ioctl(sock, SIOCGIFCONF, &ifc);
+
+  for(i=0; i<ifc.ifc_len/sizeof(struct ifreq); i++){
+
+    if(strcmp(IFR[i].ifr_name, pcapif->name) == 0){
+      ioctl(sock, SIOCGIFHWADDR, &(IFR[i]));
+      memcpy(netif->hwaddr, &(IFR[i].ifr_hwaddr.sa_data), ETHARP_HWADDR_LEN);
+      netif->hwaddr_len = ETHARP_HWADDR_LEN;
+
+      ioctl(sock, SIOCGIFMTU, &(ifc.ifc_req[i]));
+      netif->mtu = IFR[i].ifr_mtu;
+    }
+  }
+
+  return;
+}
+
+
+void pcapif_loop_init(struct netif *netif)
+{
+  printf("\n\n\npcap_loop_init : starting\n\n\n");
+
+  struct pcapif *pcapif = netif->state;
+
+  pcap_compile(pcapif->pc_descr, &(pcapif->bpf_prog), "", 0, netif->netmask.addr);
+
+  pcap_setfilter(pcapif->pc_descr, &(pcapif->bpf_prog));
+
+  if(pcap_loop(pcapif->pc_descr, -1, checkfunc, (u_char *)netif) == -1){
+    printf("pcap_loop : error\n");
+  }
+
+}
+
+void checkfunc(u_char *pcif, const struct pcap_pkthdr *hdr, const u_char * pkt)
+{
+  printf(" Recieved a packet\n");
+  struct netif *netif = pcif;
+  struct pbuf *pktbuf = pbuf_alloc(PBUF_LINK, hdr->len,PBUF_RAM);
+  pktbuf->payload = pkt;
+  netif->input(pktbuf, netif);
+}

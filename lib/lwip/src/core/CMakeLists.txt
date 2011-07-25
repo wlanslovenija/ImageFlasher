@@ -17,13 +17,19 @@ set(core_srcs
   tcp.c  
   tcp_out.c
   udp.c
+  perf.c
+  lwip_chksum.c
 )
 add_subdirectory(snmp)
 add_subdirectory(ipv4)
 #add_subdirectory(ipv6)
 
-add_library(lwipcore ${core_srcs})
-target_link_libraries(lwipcore ${PROJECT_SOURCE_DIR}/src/netif/lwipcap)
-target_link_libraries(lwipcore ${PROJECT_SOURCE_DIR}/src/api/lwipapi)
+find_package(Threads)
 
-install(TARGETS lwipcore DESTINATION ${PROJECT_SOURCE_DIR}/bin)
+add_library(lwipcore ${core_srcs})
+target_link_libraries(lwipcore lwipcap)
+target_link_libraries(lwipcore lwipapi)
+target_link_libraries(lwipcore ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(lwipcore rt)
+
+install(TARGETS lwipcore DESTINATION ${CMAKE_BUILD_DIR}/lib)

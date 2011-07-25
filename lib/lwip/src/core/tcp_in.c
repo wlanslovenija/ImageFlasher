@@ -721,6 +721,7 @@ tcp_process(struct tcp_pcb *pcb)
       }
     } else if ((flags & TCP_SYN) && (seqno == pcb->rcv_nxt - 1)) {
       /* Looks like another copy of the SYN - retransmit our SYN-ACK */
+    printf("Count this huh?\n");
       tcp_rexmit(pcb);
     }
     break;

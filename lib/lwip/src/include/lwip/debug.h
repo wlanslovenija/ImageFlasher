@@ -47,6 +47,7 @@
 #define LWIP_DBG_LEVEL_SEVERE  0x03
 #define LWIP_DBG_MASK_LEVEL    0x03
 
+#define LWIP_DEBUG              
 /** flag for LWIP_DEBUGF to enable that debug message */
 #define LWIP_DBG_ON            0x80U
 /** flag for LWIP_DEBUGF to disable that debug message */
@@ -68,6 +69,7 @@
 #define LWIP_ASSERT(message, assertion) 
 #endif /* LWIP_NOASSERT */
 
+
 /** if "expression" isn't true, then print "message" and execute "handler" expression */
 #ifndef LWIP_ERROR
 #define LWIP_ERROR(message, expression, handler) do { if (!(expression)) { \
@@ -78,7 +80,7 @@
 /** print debug message only if debug message type is enabled...
  *  AND is of correct type AND is at least LWIP_DBG_LEVEL
  */
-#define LWIP_DEBUGF(debug, message) do { \
+/*#define LWIP_DEBUGF(debug, message) do { \
                                if ( \
                                    ((debug) & LWIP_DBG_ON) && \
                                    ((debug) & LWIP_DBG_TYPES_ON) && \
@@ -90,9 +92,14 @@
                                } \
                              } while(0)
 
+*/
+#define LWIP_DEBUGF(debug, message) if(debug & LWIP_DBG_TYPES_ON) LWIP_PLATFORM_DIAG(message)
+                                  
+
 #else  /* LWIP_DEBUG */
 #define LWIP_DEBUGF(debug, message) 
 #endif /* LWIP_DEBUG */
+
 
 #endif /* __LWIP_DEBUG_H__ */
 

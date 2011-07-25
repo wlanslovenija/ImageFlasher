@@ -1,4 +1,7 @@
 #include "lwipcap.h"
+#include <stdlib.h>
+
+void* safe_malloc(size_t size);
 
 char* get_if_name(lwipcap_if_t* lwipcapif)
 {
@@ -27,17 +30,21 @@ lwipcap_addr_t* get_next_addr(lwipcap_addr_t* lwipcapaddr)
 
 struct sockaddr* get_addr(lwipcap_addr_t* lwipaddr)
 {
-  return lwipaddr->addr;
+  struct pcap_addr *temp = lwipaddr;
+  printf("alive %d \n", temp);
+  return temp->addr;
 }
 
 struct sockaddr* get_netmask(lwipcap_addr_t* lwipaddr)
 {
-  return lwipaddr->netmask;
+  struct pcap_addr *temp = lwipaddr;
+  return temp->netmask;
 }
 
 struct sockaddr* get_broadcast(lwipcap_addr_t* lwipaddr)
 {
-  return lwipaddr->broadaddr;
+  struct pcap_addr *temp = lwipaddr;
+  return temp->broadaddr;
 }
 
 lwipcap_if_t* get_all_if(struct lwipcap* lwipcap)
@@ -79,4 +86,13 @@ void term_lwipcap(struct lwipcap* lwipcap)
   return;
 }
 
+void* safe_malloc(size_t size)
+{
+  void *memptr = malloc(size);
+  if (memptr == NULL){
+    fprintf(stderr,"Insufficient memory : quitting");
+    exit(1);
+  }
 
+  return memptr;
+}

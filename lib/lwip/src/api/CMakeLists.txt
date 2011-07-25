@@ -11,8 +11,9 @@ set(api_srcs
 )
 
 add_library(lwipapi ${api_srcs})
+
 target_link_libraries(lwipapi 
-  ${PROJECT_SOURCE_DIR}/src/netif/lwipcap 
+  lwipcap 
 )
 
-install(TARGETS lwipapi DESTINATION ${PROJECT_SOURCE_DIR}/bin)
+install(TARGETS lwipapi DESTINATION ${CMAKE_BUILD_DIR}/lib/lwipapi)

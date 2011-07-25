@@ -9,5 +9,8 @@ set(lwipcap_srcs
 find_package(PCAP)
 
 add_library(lwipcap ${lwipcap_srcs})
-install(TARGETS lwipcap DESTINATION ${PROJECT_SOURCE_DIR}/bin)
+target_link_libraries(lwipcap pcap)
+
+install(TARGETS lwipcap DESTINATION ${CMAKE_BUILD_DIR}/lib/lwipcap)
+
 add_dependencies(lwipcap PCAP)
