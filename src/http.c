@@ -1,7 +1,7 @@
 #include "httpserver-netconn.h"
 int main()
 {
-  _init();
+  my_init();
   http_server_netconn_init();
 
 }
