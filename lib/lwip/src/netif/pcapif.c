@@ -62,6 +62,7 @@
 #include <string.h>
 
 #include "lwipcap.h"
+#include "netif/pcapif.h"
 /* Define those to better describe your network interface. */
 #define IFNAME0 'p'
 #define IFNAME1 'c'
@@ -110,8 +111,9 @@ low_level_init(struct netif *netif)
 
   // Remove this later
   
-  pcapif->pref_if = malloc(strlen("vboxnet0")+1);
-  strncpy(pcapif->pref_if, "vboxnet0", strlen("vboxnet0")+1);
+  //pcapif->pref_if = malloc(strlen("vboxnet0")+1);
+  //strncpy(pcapif->pref_if, "vboxnet0", strlen("vboxnet0")+1);
+  
   if(pcapif->pref_if == NULL){
     pcapif->iface = pcap_lookupdev(pcapif->errbuf);
     if(pcapif->iface == NULL)
@@ -331,6 +333,8 @@ pcapif_init(struct netif *netif)
     LWIP_DEBUGF(NETIF_DEBUG, ("pcapif_init: out of memory\n"));
     return ERR_MEM;
   }
+
+  pcapif->pref_if = prefif;
 
 #if LWIP_NETIF_HOSTNAME
   /* Initialize interface hostname */
