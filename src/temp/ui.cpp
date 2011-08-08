@@ -1,25 +1,8 @@
-using namespace std; 
+//using namespace imgfl; 
+using namespace std;
+#include "ui.hpp"
 #include <list>
-#include <string>
-#include <iostream>
-#include "step"
 
-class UI {
-
-  private:
-  Step *cur_step;
-  
-  public:
-  void init();
-
-  void init_selection(list<string> items);
-  string get_selection(list<string> items);
-
-  void init_input(string msg);
-  string get_input(string item);
-
-  void proceed_to(Step *s);
-};
 
 void UI::init_input(string msg)
 {
@@ -71,7 +54,7 @@ string UI::get_selection(list<string> items)
 
 void UI::proceed_to(Step *step)
 {
-  this->cur_step = &step;
+  this->cur_step = step;
 
   cout << endl << "*******************************************" << endl << endl;
 
