@@ -1,8 +1,24 @@
 //using namespace imgfl; 
 using namespace std;
-#include "ui.hpp"
-#include <list>
 
+#include "ui.hpp"
+#include "welcome.hpp"
+#include <list>
+#include <stdlib.h>
+
+void UI::run()
+{
+    Step *welcome = new Welcome;
+    
+    action = welcome;
+    while(action != NULL){
+        init_step();
+        cur_step->display(this);
+        cur_step->process();
+        proceed();
+
+    }
+}
 
 void UI::init_input(string msg)
 {
@@ -52,28 +68,53 @@ string UI::get_selection(list<string> items)
   return *itr;
 }
 
-void UI::proceed_to(Step *step)
+void UI::set_action(Step *step)
 {
-  this->cur_step = step;
+    action = step;
+}
+
+void UI::init_step()
+{
+  this->cur_step = action;
+
+  this->cur_step->init();
 
   cout << endl << "*******************************************" << endl << endl;
 
-  cout << "Step : " << step->get_name() << endl << endl;
+  cout << "Step : " << this->cur_step->get_name() << endl << endl;
 
-  cout << step->get_desc();
+  cout << this->cur_step->get_desc();
+}
+
+void UI::proceed()
+{
+    std::string inp;
+    cout << endl;
+    while(1){
+        if(cur_step->next() == NULL)
+            cout << "Please enter 'f' to finish or b for back :";
+        else if(cur_step->back() == NULL)
+            cout << "Please enter 'n' for next or 'q' to quit:";
+        else
+        cout << "Please enter 'b' for back or 'n' for next :";
+
+        cin  >> inp;
+
+        if(inp == "b" || (cur_step->back() == NULL && inp == "q")){
+            action = cur_step->back();
+            break;
+        }else if(inp == "n" || (cur_step->next() == NULL && inp == "f")){
+            action = cur_step->next();
+            break;
+        }else{
+            continue;
+        }
+    }
 }
 
 int main()
 {
-  UI x;
-  list<string> names;
-  names.push_back("linux");
-  names.push_back("winxp");
-  names.push_back("BSD");
-  names.push_back("solaris");
-  x.init_selection(names);
-  cout << x.get_selection(names);
+  UI *ui = new UI;
 
-  x.init_input("What is my name? ");
-  x.get_input("What is my name? ");
+  ui->run();
 }

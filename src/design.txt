@@ -1,0 +1,159 @@
+
+The design of the application layer of the flasher follows. Please express your comments on the design. The design mainly focuses on the following:
+
+1. 'Step'-by-step approach to flashing
+2. Easy addition of new router types with as little change as possible
+3. Complete UI (Console vs GUI) abstraction to the actual flasher
+
+The entire flashing process is divided into 'n' number of steps.
+
+1. Welcome 
+2. InterfaceSelection
+3. RouterTypeSelection
+4. ImageSelection
+5. Flashwizard(Multiple number of steps depending upon the router type)
+
+Every step is subclass of the abstract class Step. 
+
+Abstract Class Step
+  - stepName
+  - stepDesc
+
+  - next()
+    returns the reference to the next step
+
+  - back()
+    returns reference to the previous step
+
+  - init()
+    initializes the attributes of the step
+
+  - display()
+    Displays the content in the step using the methods of the UI object
+    Eg. Display name, display a list of available router types etc
+
+  - process()
+    Reads the user input and processes it as necessary. This is where the core step processing happens.
+
+While adding support for new routers, the steps required to flash that specific router are to be implemented as subclasses. But to define a step, the UI should also be accessed. Instead of directly accessing specific UI components, the UI layer is abstracted by the 'UI' class. The underlying implementation of this class decides whether flasher is GUI based or console based. The main advantages of such an abstraction is that the core functionality of the flasher would work with any interface which is implemented. If the GUI library isn't working well, it can be replaced by another without any change to the core functionality. Just the UI class would have to be re-implemented. 
+
+Class UI
+  - current_step
+
+  - init()
+    Initialize the UI elements. And load the first step "Welcome" into the UI
+
+  - selection()
+    This will be passed a list of items. Out of these items ultimately one has to be selected.
+    For Console : This will be a numbered list
+    For GUI : This will be a drop down menu from which one can be selected
+
+  - get_selection()
+    It will return the selected one out of the number of items.
+    For Console : The entry number in the list is read and the corresponding menu item is returned
+    For GUI : Get and return the value of the selected item from the dropdown.
+
+  - input()
+    It will be setting up the string input functionality.
+    For Console : Just display a message like "Please enter image file name :"
+    For GUI : Setup the display message and a Text input dialog box
+
+  - get_input()
+    Read the input 
+    For Console : Perhaps something like reading from stdin 
+    For GUI : Get the value of the input dialog box 
+
+  - set_name()
+    Set the title of the step
+    For Console : printf("Step : %s\n", stepname);
+    For GUI : Set the panel's title label to stepname;
+
+  - set_desc()
+    Similar to set_name()
+
+  - proceed_to(Step s)
+    proceed to the next step;
+Console:
+ui.init() would do :
+  current_step.init();
+  current_step.display();
+  current_step.process();
+  current_step = current_step.next()
+
+GUI:
+ui.init() would do on window load:
+  current_step = Welcome()
+  current_step->init()
+  current_step->display()
+
+Next button Clicked event handler would do the following:
+  current_step->process()
+  current_step = current_step->next()
+  current_step->init();
+  current_step->display();
+
+
+
+Class Welcome extends Step
+  - Welcome()
+    Sets the stepName and stepMessage appropriately
+    back() is overridden to return NULL
+    next() is overridden to return NetworkInterface object
+
+Class NetworkInterface  
+  - if_name
+  - ip_addr
+  - subnet_mask
+  - gateway
+
+  - NetworkInterface()
+    initializes all members to NULL( this means pickup any available interface, not preferred though)
+
+  - list_all()
+    List all the interface available
+  
+  - set_interface(string if_name)
+    sets the interface name as if_name
+    
+  - set_ip_addr(int byte1, int byte2, int byte3, int byte4)
+    sets the ip address
+
+  - set_subnet_mask(int byte1, int byte2, int byte3, int byte4)
+    sets the subnet mask
+
+  - set_gateway(int byte1, int byte2, int byte3, int byte4)
+    sets the gateway address
+
+Abstract Class RouterType
+
+  - name
+  - desc
+  - ip_addr
+  - subnet_mask
+  
+  - get and set methods for the above members
+  
+  - validate_image(Image img)
+    validates whether the passed Image object is a valid image for this type of router
+    return TRUE or FALSE accordingly
+
+  - setup_iface(NetworkInteface netif)
+    sets up the ip_addr, subnet_mask of netif depending on the addr of this router 
+  
+  - flash()
+    starts the flashing process specific to this type of router
+
+    
+Class Router
+
+  - RouterType type
+  - Image image
+  - status
+
+  - Router(RouterType type, Image image, NetworkInterface netif)
+  
+  - get and set methods for the members
+
+
+The functionality to the flasher like TFTP server, client, telent would be implmented as classes so that for adding support to new routers also these classes can be reused as required. The design for the functionality is not yet completely ready. It will be improved as the work progresses.
+
