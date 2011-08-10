@@ -1,7 +1,8 @@
-#ifndef IMGFLSHR_STEP_H
-#define IMGFLSHR_STEP_H
-
 using namespace std;
+#ifndef IMGFLSHR_STEP_HPP
+#define IMGFLSHR_STEP_HPP
+
+
 #include <string>
 class UI;
 
@@ -25,9 +26,8 @@ class Step {
     virtual Step *back()   = 0;
 
     virtual void init()    = 0;
-    virtual void display(UI *ui) = 0;
     virtual void process() = 0;
 
 };
 
-#endif /* IMGFLSHR_STEP_H */
+#endif /* IMGFLSHR_STEP_HPP */
