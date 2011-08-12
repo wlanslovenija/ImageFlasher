@@ -5,19 +5,21 @@ using namespace std;
 
 #include "step.hpp"
 #include "ui_selection.hpp"
+#include "ui_step.hpp"
 #include <list>
 #include <string>
+class UI_Step;
 
-class NetIface : public Step ,public UI_Selection {
+class NetIface : public UI_Selection {
   protected:
-    Step *nextStep;
-    Step *backStep;
+    UI_Step *nextStep;
+    UI_Step *backStep;
   
   public:
     NetIface(Step *step);
     
-    Step *next();
-    Step *back();
+    UI_Step *next();
+    UI_Step *back();
 
     void init();
     void process();

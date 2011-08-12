@@ -5,11 +5,13 @@ using namespace std;
 
 void UI_Step::initStep()
 {
+
   Step *step = this;
 
   step->init();
 
-  cout << endl << "*******************************************" << endl << endl;
+  for(int i =0; i < 100; i++)
+    cout << endl;
 
   cout << "Step : " << step->get_name() << endl << endl;
 

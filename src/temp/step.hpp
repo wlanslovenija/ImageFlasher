@@ -5,6 +5,7 @@ using namespace std;
 
 #include <string>
 class UI;
+class UI_Step;
 
 class Step {
   protected:
@@ -22,8 +23,8 @@ class Step {
     std::string get_name();
     std::string get_desc();
 
-    virtual Step *next()   = 0;
-    virtual Step *back()   = 0;
+    virtual UI_Step *next()   = 0;
+    virtual UI_Step *back()   = 0;
 
     virtual void init()    = 0;
     virtual void process() = 0;

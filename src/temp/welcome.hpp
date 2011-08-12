@@ -4,17 +4,19 @@ using namespace std;
 #define IMGFLSHR_WELCOME_H
 
 #include "step.hpp"
+#include "ui_selection.hpp"
+#include "ui_step.hpp"
 
 
-class Welcome : public Step {
+class Welcome : public UI_Step {
   protected:
-    Step *nextStep;
-    Step *backStep;
+    UI_Step *nextStep;
+    UI_Step *backStep;
   
   public:
     
-    Step *next();
-    Step *back();
+    UI_Step *next();
+    UI_Step *back();
 
     void init();
     void display(UI *ui);

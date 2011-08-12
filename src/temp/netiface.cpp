@@ -4,18 +4,19 @@ using namespace std;
 #include "netiface.hpp"
 #include <list>
 #include <pcap.h>
+class UI_Step;
 
 NetIface::NetIface(Step *step)
 {
-  backStep = step;
+  backStep = dynamic_cast<UI_Step*>(step);
 }
 
-Step* NetIface::next() {
+UI_Step* NetIface::next() {
   return NULL;
   //Change this to image selection
 }
 
-Step* NetIface::back() 
+UI_Step* NetIface::back() 
 {
   return backStep;
 }
@@ -34,6 +35,7 @@ void NetIface::init()
     cout << pcerrbuf; 
   while(allifs != NULL){
     ifaces.push_back(allifs->name);
+    allifs = allifs->next;
   }
 
   setList(ifaces);

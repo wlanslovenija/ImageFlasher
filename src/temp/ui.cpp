@@ -11,12 +11,12 @@ void UI::run()
 {
     Step *welcome = new Welcome;
     
-    action = welcome;
+    action = dynamic_cast<UI_Step *>(welcome);
     while(action != NULL){
 
         this->cur_step = action;
 
-        UI_Step * uistep = (void *)cur_step;
+        UI_Step * uistep = dynamic_cast<UI_Step *> (cur_step); 
         uistep->initStep();
         uistep->display(this);
         
@@ -26,19 +26,9 @@ void UI::run()
     }
 }
 
-string UI::get_input(string msg)
-{
-  string inp;
-  cout << endl;
-  cin  >> inp;
-  cout << endl;
-
-  return inp;
-} 
-
 void UI::set_action(Step *step)
 {
-    action = step;
+    action = static_cast<UI_Step*> (step);
 }
 
 void UI::proceed()

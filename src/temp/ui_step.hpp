@@ -3,8 +3,9 @@ using namespace std;
 #define UI_STEP_HPP
 
 #include "ui.hpp"
+#include "step.hpp"
 
-class UI_Step {
+class UI_Step : public Step{
   private:
     virtual void display(UI *ui) = 0;
     friend void UI::run();

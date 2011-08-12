@@ -4,14 +4,14 @@ using namespace std;
 #include "welcome.hpp"
 #include "netiface.hpp"
 
-Step* Welcome::next() {
+UI_Step* Welcome::next() {
     if(nextStep == NULL)
         nextStep = new NetIface((Step *)this);
     return nextStep;
     //Change this to network interface selection
 }
 
-Step* Welcome::back() {
+UI_Step* Welcome::back() {
   return backStep;
 }
 
