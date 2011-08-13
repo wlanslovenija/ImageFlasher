@@ -1,10 +1,13 @@
 
 using namespace std;
 #include "ui.hpp"
+#include "image.hpp"
 #include "netiface.hpp"
 #include <list>
 #include <pcap.h>
-class UI_Step;
+#include "step.hpp"
+#include "ui_selection.hpp"
+
 
 NetIface::NetIface(Step *step)
 {
@@ -12,7 +15,11 @@ NetIface::NetIface(Step *step)
 }
 
 UI_Step* NetIface::next() {
-  return NULL;
+  if(nextStep == NULL){
+    nextStep = new ImageStep((Step *)this);
+  }
+
+  return nextStep;
   //Change this to image selection
 }
 

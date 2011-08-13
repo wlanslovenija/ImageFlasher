@@ -8,7 +8,6 @@ using namespace std;
 #include "ui_step.hpp"
 #include <list>
 #include <string>
-class UI_Step;
 
 class NetIface : public UI_Selection {
   protected:
