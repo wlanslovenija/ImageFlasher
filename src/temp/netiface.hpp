@@ -11,14 +11,12 @@ using namespace std;
 
 class NetifStep : public UISelection {
   protected:
-    UIStep *nextStep;
-    UIStep *backStep;
   
   public:
-    NetifStep(Step *step);
+    NetifStep();
     
-    UIStep *next();
-    UIStep *back();
+    std::string getNext();
+    std::string getPrev();
 
     void init();
     void process();

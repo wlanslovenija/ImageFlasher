@@ -11,8 +11,11 @@ class Step {
   protected:
     UI *ui;
 
-    std::string stepName;
-    std::string stepDesc;
+    std::string next_step;
+    std::string prev_step;
+
+    std::string step_name;
+    std::string step_desc;
 
     void setName(std::string name);
 
@@ -23,8 +26,8 @@ class Step {
     std::string get_name();
     std::string get_desc();
 
-    virtual UIStep *next()   = 0;
-    virtual UIStep *back()   = 0;
+    virtual std::string getNext()   = 0;
+    virtual std::string getPrev()   = 0;
 
     virtual void init()    = 0;
     virtual void process() = 0;

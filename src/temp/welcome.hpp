@@ -10,13 +10,12 @@ using namespace std;
 
 class Welcome : public UIStep {
   protected:
-    UIStep *nextStep;
-    UIStep *backStep;
   
   public:
+    Welcome();
     
-    UIStep *next();
-    UIStep *back();
+    std::string getNext();
+    std::string getPrev();
 
     void init();
     void display(UI *ui);

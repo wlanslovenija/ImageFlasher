@@ -8,22 +8,19 @@ using namespace std;
 
 class UIStep;
 
-ImageStep::ImageStep(Step *step)
+ImageStep::ImageStep()
 {
-  backStep = dynamic_cast<UIStep*>(step);
-  nextStep = NULL;
+  prev_step = "netif";
+  next_step = "router";
 }
 
-UIStep* ImageStep::next() {
-  if(nextStep == NULL)
-    nextStep = new RouterStep((Step *)this);
-
-  return nextStep;
+std::string ImageStep::getNext() {
+  return next_step;
 }
 
 
-UIStep* ImageStep::back() {
-  return backStep;
+std::string ImageStep::getPrev() {
+  return prev_step;
 }
 
 void ImageStep::init()

@@ -9,18 +9,16 @@ using namespace std;
 
 void UI::run()
 {
-    Step *welcome = new Welcome;
-    
-    action = dynamic_cast<UIStep *>(welcome);
+    action = step_manager.getStep("welcome");
     while(action != NULL){
 
-        this->currentStep = action;
+        current_step = action;
 
-        UIStep * uistep = dynamic_cast<UIStep *> (currentStep); 
+        UIStep * uistep = dynamic_cast<UIStep *> (current_step); 
         uistep->initStep();
         uistep->display(this);
         
-        currentStep->process();
+        current_step->process();
 
         proceed();
     }
@@ -36,20 +34,20 @@ void UI::proceed()
     std::string inp;
     cout << endl;
     while(1){
-        if(currentStep->next() == NULL)
+        if(current_step->getNext() == "")
             cout << "Please enter 'f' to finish or b for back :";
-        else if(currentStep->back() == NULL)
+        else if(current_step->getPrev() == "")
             cout << "Please enter 'n' for next or 'q' to quit:";
         else
         cout << "Please enter 'b' for back or 'n' for next :";
 
         cin  >> inp;
 
-        if(inp == "b" || (currentStep->back() == NULL && inp == "q")){
-            action = currentStep->back();
+        if(inp == "b" || (current_step->getPrev() == "" && inp == "q")){
+            action = step_manager.getStep(current_step->getPrev());
             break;
-        }else if(inp == "n" || (currentStep->next() == NULL && inp == "f")){
-            action = currentStep->next();
+        }else if(inp == "n" || (current_step->getNext() == "" && inp == "f")){
+            action = step_manager.getStep(current_step->getNext());
             break;
         }else{
             continue;

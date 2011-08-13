@@ -7,25 +7,26 @@ using namespace std;
 #include <list>
 #include <string>
 
-RouterStep::RouterStep(Step *step)
+RouterStep::RouterStep()
 {
-  backStep = dynamic_cast<UIStep*>(step);
+  prev_step = "image";
 }
 
-UIStep* RouterStep::next() {
-  return nextStep;  
+std::string RouterStep::getNext() {
+  return next_step;  
 }
-UIStep* RouterStep::back()
+
+std::string RouterStep::getPrev()
 {
-  return backStep;
+  return prev_step;
 }
 
 void RouterStep::init(){
   list<std::string> types;
 
   //Step information
-  this->setName("Router Type");
-  this->setDesc("Please select the type of your router");
+  setName("Router Type");
+  setDesc("Please select the type of your router");
 
   //Router types;
   types.push_back("LinkSys");
@@ -35,6 +36,6 @@ void RouterStep::init(){
 
 void RouterStep::process()
 {
-  nextStep = NULL;
+  next_step = "";
   cout << getSelection();
 }

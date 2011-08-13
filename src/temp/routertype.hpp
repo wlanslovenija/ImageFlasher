@@ -11,14 +11,12 @@ using namespace std;
 
 class RouterStep : public UISelection {
   protected:
-    UIStep *nextStep;
-    UIStep *backStep;
   
   public:
-    RouterStep(Step *step);
+    RouterStep();
     
-    UIStep *next();
-    UIStep *back();
+    std::string getNext();
+    std::string getPrev();
 
     void init();
     void process();

@@ -7,10 +7,12 @@
 #include "step.hpp"
 class UIStep;
 
+#include "step_manager.hpp"
 class UI {
 
   private:
-  Step *currentStep;
+  StepManager step_manager;
+  Step *current_step;
   UIStep *action;
 
   void init_step();

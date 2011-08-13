@@ -3,18 +3,18 @@
 using namespace std;
 
 std::string Step::get_name(){
-  return stepName;
+  return step_name;
 }
 
 void Step::setName(std::string name){
-  stepName = name;
+  step_name = name;
 }
 
 std::string Step::get_desc(){
-  return stepDesc;
+  return step_desc;
 }
 
 void Step::setDesc(std::string desc){
-  stepDesc = desc;
+  step_desc = desc;
 }
 

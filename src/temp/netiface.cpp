@@ -1,39 +1,36 @@
 
 using namespace std;
+#include <list>
+#include <pcap.h>
 #include "ui.hpp"
 #include "netiface.hpp"
 #include "image.hpp"
-#include <list>
-#include <pcap.h>
 #include "step.hpp"
 #include "ui_selection.hpp"
 
 
-NetifStep::NetifStep(Step *step)
+NetifStep::NetifStep()
 {
-  backStep = dynamic_cast<UIStep*>(step);
+  prev_step = "welcome";
+  next_step = "image";
 }
 
-UIStep* NetifStep::next() {
-  if(nextStep == NULL){
-    nextStep = new ImageStep((Step *)this);
-  }
-
-  return nextStep;
-  //Change this to image selection
+std::string NetifStep::getNext() {
+  return next_step;
 }
 
-UIStep* NetifStep::back() 
+std::string NetifStep::getPrev() 
 {
-  return backStep;
+  return prev_step;
 }
 
 void NetifStep::init()
 {
   list<string> ifaces;
+  
   //Step information
-  this->setName("Network Interface");
-  this->setDesc("Please select the network interface connected to your router");
+  setName("Network Interface");
+  setDesc("Please select the network interface connected to your router");
 
   //Initializing the list of choices for selection
   char pcerrbuf[PCAP_ERRBUF_SIZE];

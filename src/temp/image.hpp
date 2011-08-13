@@ -11,14 +11,11 @@ using namespace std;
 class ImageStep : public UIInput {
 
   protected:
-    UIStep *nextStep;
-    UIStep *backStep;
-
   public:
-    ImageStep(Step *step);
+    ImageStep();
 
-    UIStep *next();
-    UIStep *back();
+    std::string getNext();
+    std::string getPrev();
 
     void init();
     void process();
