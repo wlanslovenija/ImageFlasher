@@ -5,13 +5,13 @@
 #include <string>
 #include <iostream>
 #include "step.hpp"
-class UI_Step;
+class UIStep;
 
 class UI {
 
   private:
-  Step *cur_step;
-  UI_Step *action;
+  Step *currentStep;
+  UIStep *action;
 
   void init_step();
   void proceed();

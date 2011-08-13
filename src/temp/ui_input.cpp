@@ -3,7 +3,7 @@ using namespace std;
 #include <iostream>
 #include <string>
 
-void UI_Input::display(UI *ui)
+void UIInput::display(UI *ui)
 {
   
   cout << endl << prompt << endl;
@@ -11,12 +11,12 @@ void UI_Input::display(UI *ui)
   cout << endl;
 }
 
-void UI_Input::setPrompt(std::string str)
+void UIInput::setPrompt(std::string str)
 {
   prompt = str;
 }
 
-std::string UI_Input::getInput()
+std::string UIInput::getInput()
 {
   return input;
 }

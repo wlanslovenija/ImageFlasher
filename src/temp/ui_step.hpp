@@ -5,7 +5,7 @@ using namespace std;
 #include "ui.hpp"
 #include "step.hpp"
 
-class UI_Step : public Step{
+class UIStep : public Step{
   private:
     virtual void display(UI *ui) = 0;
     friend void UI::run();

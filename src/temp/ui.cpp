@@ -11,16 +11,16 @@ void UI::run()
 {
     Step *welcome = new Welcome;
     
-    action = dynamic_cast<UI_Step *>(welcome);
+    action = dynamic_cast<UIStep *>(welcome);
     while(action != NULL){
 
-        this->cur_step = action;
+        this->currentStep = action;
 
-        UI_Step * uistep = dynamic_cast<UI_Step *> (cur_step); 
+        UIStep * uistep = dynamic_cast<UIStep *> (currentStep); 
         uistep->initStep();
         uistep->display(this);
         
-        cur_step->process();
+        currentStep->process();
 
         proceed();
     }
@@ -28,7 +28,7 @@ void UI::run()
 
 void UI::set_action(Step *step)
 {
-    action = static_cast<UI_Step*> (step);
+    action = static_cast<UIStep*> (step);
 }
 
 void UI::proceed()
@@ -36,20 +36,20 @@ void UI::proceed()
     std::string inp;
     cout << endl;
     while(1){
-        if(cur_step->next() == NULL)
+        if(currentStep->next() == NULL)
             cout << "Please enter 'f' to finish or b for back :";
-        else if(cur_step->back() == NULL)
+        else if(currentStep->back() == NULL)
             cout << "Please enter 'n' for next or 'q' to quit:";
         else
         cout << "Please enter 'b' for back or 'n' for next :";
 
         cin  >> inp;
 
-        if(inp == "b" || (cur_step->back() == NULL && inp == "q")){
-            action = cur_step->back();
+        if(inp == "b" || (currentStep->back() == NULL && inp == "q")){
+            action = currentStep->back();
             break;
-        }else if(inp == "n" || (cur_step->next() == NULL && inp == "f")){
-            action = cur_step->next();
+        }else if(inp == "n" || (currentStep->next() == NULL && inp == "f")){
+            action = currentStep->next();
             break;
         }else{
             continue;

@@ -9,12 +9,12 @@ using namespace std;
 #include "ui_selection.hpp"
 
 
-NetIface::NetIface(Step *step)
+NetifStep::NetifStep(Step *step)
 {
-  backStep = dynamic_cast<UI_Step*>(step);
+  backStep = dynamic_cast<UIStep*>(step);
 }
 
-UI_Step* NetIface::next() {
+UIStep* NetifStep::next() {
   if(nextStep == NULL){
     nextStep = new ImageStep((Step *)this);
   }
@@ -23,33 +23,33 @@ UI_Step* NetIface::next() {
   //Change this to image selection
 }
 
-UI_Step* NetIface::back() 
+UIStep* NetifStep::back() 
 {
   return backStep;
 }
 
-void NetIface::init()
+void NetifStep::init()
 {
   list<string> ifaces;
   //Step information
-  this->set_name("Network Interface");
-  this->set_desc("Please select the network interface connected to your router");
+  this->setName("Network Interface");
+  this->setDesc("Please select the network interface connected to your router");
 
   //Initializing the list of choices for selection
   char pcerrbuf[PCAP_ERRBUF_SIZE];
-  pcap_if_t *allifs;
-  if(pcap_findalldevs(&allifs, pcerrbuf) == -1)
+  pcap_if_t *allIfs;
+  if(pcap_findalldevs(&allIfs, pcerrbuf) == -1)
     cout << pcerrbuf; 
-  while(allifs != NULL){
-    ifaces.push_back(allifs->name);
-    allifs = allifs->next;
+  while(allIfs != NULL){
+    ifaces.push_back(allIfs->name);
+    allIfs = allIfs->next;
   }
 
   setList(ifaces);
 
 }
 
-void NetIface::process() 
+void NetifStep::process() 
 {
   cout << getSelection();
 }

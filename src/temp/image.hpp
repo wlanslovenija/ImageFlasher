@@ -8,17 +8,17 @@ using namespace std;
 #include "step.hpp"
 #include <string>
 
-class ImageStep : public UI_Input {
+class ImageStep : public UIInput {
 
   protected:
-    UI_Step *nextStep;
-    UI_Step *backStep;
+    UIStep *nextStep;
+    UIStep *backStep;
 
   public:
     ImageStep(Step *step);
 
-    UI_Step *next();
-    UI_Step *back();
+    UIStep *next();
+    UIStep *back();
 
     void init();
     void process();

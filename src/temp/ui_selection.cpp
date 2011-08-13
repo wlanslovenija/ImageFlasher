@@ -3,7 +3,7 @@ using namespace std;
 #include "ui_selection.hpp"
 #include "ui.hpp"
 
-void UI_Selection::display(UI *ui){
+void UISelection::display(UI *ui){
 
   int i = 1;
   cout << endl;
@@ -20,7 +20,7 @@ void UI_Selection::display(UI *ui){
   cin.ignore();
 
   while(i > selectList.size() || i < 1){
-    cout << endl << "Please enter a valid choice :" << endl; 
+    cout << endl << "Please enter a valid choice :" ; 
     cin >> i;
     cin.ignore();
     cin.clear();
@@ -34,7 +34,7 @@ void UI_Selection::display(UI *ui){
   selection =  *itr;
 }
 
-void UI_Selection::setList(list<std::string> List){
+void UISelection::setList(list<std::string> List){
   list<std::string>::iterator itr = List.begin();
   selectList.clear();
 
@@ -44,6 +44,6 @@ void UI_Selection::setList(list<std::string> List){
   }
 }
 
-std::string UI_Selection::getSelection(){
+std::string UISelection::getSelection(){
   return selection;
 }

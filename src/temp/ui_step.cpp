@@ -3,7 +3,7 @@ using namespace std;
 #include "ui_step.hpp"
 #include "step.hpp"
 
-void UI_Step::initStep()
+void UIStep::initStep()
 {
 
   Step *step = this;

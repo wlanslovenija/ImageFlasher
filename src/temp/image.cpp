@@ -6,15 +6,15 @@ using namespace std;
 #include "image.hpp"
 #include "routertype.hpp"
 
-class UI_Step;
+class UIStep;
 
 ImageStep::ImageStep(Step *step)
 {
-  backStep = dynamic_cast<UI_Step*>(step);
+  backStep = dynamic_cast<UIStep*>(step);
   nextStep = NULL;
 }
 
-UI_Step* ImageStep::next() {
+UIStep* ImageStep::next() {
   if(nextStep == NULL)
     nextStep = new RouterStep((Step *)this);
 
@@ -22,7 +22,7 @@ UI_Step* ImageStep::next() {
 }
 
 
-UI_Step* ImageStep::back() {
+UIStep* ImageStep::back() {
   return backStep;
 }
 
@@ -30,8 +30,8 @@ void ImageStep::init()
 {
   std::string inputMessage;
 
-  set_name("Firmware Image");
-  set_desc("Please choose the firmware image file that you want to use for flashing");
+  setName("Firmware Image");
+  setDesc("Please choose the firmware image file that you want to use for flashing");
 
   setPrompt("Path to the image file :");  
 }

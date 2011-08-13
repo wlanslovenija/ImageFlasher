@@ -8,7 +8,7 @@ using namespace std;
 #include "ui.hpp"
 #include <string>
 
-class UI_Input : public UI_Step {
+class UIInput : public UIStep {
   private:
     std::string input;
     std::string prompt;

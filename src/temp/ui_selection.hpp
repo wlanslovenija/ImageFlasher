@@ -5,7 +5,7 @@ using namespace std;
 #include "ui_step.hpp"
 #include "ui.hpp"
 
-class UI_Selection : public UI_Step{
+class UISelection : public UIStep{
 
   private:
     list<std::string> selectList;

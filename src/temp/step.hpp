@@ -5,7 +5,7 @@ using namespace std;
 
 #include <string>
 class UI;
-class UI_Step;
+class UIStep;
 
 class Step {
   protected:
@@ -14,17 +14,17 @@ class Step {
     std::string stepName;
     std::string stepDesc;
 
-    void set_name(std::string name);
+    void setName(std::string name);
 
-    void set_desc(std::string name);
+    void setDesc(std::string name);
 
   public:
 
     std::string get_name();
     std::string get_desc();
 
-    virtual UI_Step *next()   = 0;
-    virtual UI_Step *back()   = 0;
+    virtual UIStep *next()   = 0;
+    virtual UIStep *back()   = 0;
 
     virtual void init()    = 0;
     virtual void process() = 0;

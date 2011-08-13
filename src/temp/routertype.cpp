@@ -9,13 +9,13 @@ using namespace std;
 
 RouterStep::RouterStep(Step *step)
 {
-  backStep = dynamic_cast<UI_Step*>(step);
+  backStep = dynamic_cast<UIStep*>(step);
 }
 
-UI_Step* RouterStep::next() {
+UIStep* RouterStep::next() {
   return nextStep;  
 }
-UI_Step* RouterStep::back()
+UIStep* RouterStep::back()
 {
   return backStep;
 }
@@ -24,8 +24,8 @@ void RouterStep::init(){
   list<std::string> types;
 
   //Step information
-  this->set_name("Router Type");
-  this->set_desc("Please select the type of your router");
+  this->setName("Router Type");
+  this->setDesc("Please select the type of your router");
 
   //Router types;
   types.push_back("LinkSys");
