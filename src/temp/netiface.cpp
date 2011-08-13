@@ -1,5 +1,6 @@
 
 using namespace std;
+
 #include <list>
 #include <pcap.h>
 #include "ui.hpp"
@@ -7,6 +8,8 @@ using namespace std;
 #include "image.hpp"
 #include "step.hpp"
 #include "ui_selection.hpp"
+
+extern int local_ip[], local_nm[], local_gw[];
 
 
 NetifStep::NetifStep()
@@ -48,6 +51,5 @@ void NetifStep::init()
 
 void NetifStep::process() 
 {
-  cout << getSelection();
 }
 

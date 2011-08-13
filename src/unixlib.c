@@ -54,6 +54,10 @@
 
 #include "netif/pcapif.h"
 
+int local_ip[4];
+int local_gw[4];
+int local_nm[4];
+
 struct netif netif;
 
 static void
@@ -66,9 +70,9 @@ tcpip_init_done(void *arg)
   /*
     CHANGE THESE to suit your own network configuration:
   */
-  IP4_ADDR(&gateway, 192,168,56,11);
-  IP4_ADDR(&ipaddr, 192,168,56,11);
-  IP4_ADDR(&netmask, 255,255,255,0);
+  IP4_ADDR(&gateway, local_gw[0],local_gw[1],local_gw[2],local_gw[3]);
+  IP4_ADDR(&ipaddr, local_ip[0],local_ip[1],local_ip[2],local_ip[3]);
+  IP4_ADDR(&netmask, local_nm[0],local_nm[1],local_nm[2],local_nm[3]);
   
   netif_set_default(netif_add(&netif, &ipaddr, &netmask, &gateway, NULL, pcapif_init,
 			      tcpip_input));

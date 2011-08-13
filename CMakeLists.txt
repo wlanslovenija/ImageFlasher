@@ -12,6 +12,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 include_directories(lib/lwip/src/include)
+include_directories(src)
 
 
 add_subdirectory(lib)
