@@ -4,17 +4,23 @@ using namespace std;
 #include <pcap.h>
 #include "ui.hpp"
 #include "image.hpp"
+#include "routertype.hpp"
 
 class UI_Step;
 
 ImageStep::ImageStep(Step *step)
 {
   backStep = dynamic_cast<UI_Step*>(step);
+  nextStep = NULL;
 }
 
 UI_Step* ImageStep::next() {
-  return NULL;
+  if(nextStep == NULL)
+    nextStep = new RouterStep((Step *)this);
+
+  return nextStep;
 }
+
 
 UI_Step* ImageStep::back() {
   return backStep;

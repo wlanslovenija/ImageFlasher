@@ -1,8 +1,8 @@
 
 using namespace std;
 #include "ui.hpp"
-#include "image.hpp"
 #include "netiface.hpp"
+#include "image.hpp"
 #include <list>
 #include <pcap.h>
 #include "step.hpp"
