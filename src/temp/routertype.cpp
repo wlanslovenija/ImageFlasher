@@ -9,16 +9,11 @@ using namespace std;
 
 RouterStep::RouterStep()
 {
-  prev_step = "image";
+  step_id = "router";
 }
 
 std::string RouterStep::getNext() {
   return next_step;  
-}
-
-std::string RouterStep::getPrev()
-{
-  return prev_step;
 }
 
 void RouterStep::init(){

@@ -15,7 +15,6 @@ class Welcome : public UIStep {
     Welcome();
     
     std::string getNext();
-    std::string getPrev();
 
     void init();
     void display(UI *ui);

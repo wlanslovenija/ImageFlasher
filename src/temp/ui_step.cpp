@@ -13,8 +13,8 @@ void UIStep::initStep()
   for(int i =0; i < 100; i++)
     cout << endl;
 
-  cout << "Step : " << step->get_name() << endl << endl;
+  cout << "Step : " << step->getName() << endl << endl;
 
-  cout << step->get_desc(); 
+  cout << step->getDesc(); 
 }
 

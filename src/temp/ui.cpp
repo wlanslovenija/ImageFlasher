@@ -9,7 +9,7 @@ using namespace std;
 
 void UI::run()
 {
-    action = step_manager.getStep("welcome");
+    action = step_manager.getStep("welcome","");
     while(action != NULL){
 
         current_step = action;
@@ -31,28 +31,35 @@ void UI::set_action(Step *step)
 
 void UI::proceed()
 {
-    std::string inp;
-    cout << endl;
-    while(1){
-        if(current_step->getNext() == "")
-            cout << "Please enter 'f' to finish or b for back :";
-        else if(current_step->getPrev() == "")
-            cout << "Please enter 'n' for next or 'q' to quit:";
-        else
-        cout << "Please enter 'b' for back or 'n' for next :";
 
-        cin  >> inp;
+  std::string inp, prev_id, next_id;
+  cout << endl;
+  prev_id = step_manager.getPrev(current_step->getID());
+  next_id = current_step->getNext();
 
-        if(inp == "b" || (current_step->getPrev() == "" && inp == "q")){
-            action = step_manager.getStep(current_step->getPrev());
-            break;
-        }else if(inp == "n" || (current_step->getNext() == "" && inp == "f")){
-            action = step_manager.getStep(current_step->getNext());
-            break;
-        }else{
-            continue;
-        }
+
+  while(1){
+    if(current_step->getNext() == "")
+      cout << "Please enter 'f' to finish or b for back :";
+    else if(next_id == "")
+      cout << "Please enter 'n' for next or 'q' to quit:";
+    else
+      cout << "Please enter 'b' for back or 'n' for next :";
+
+    cin  >> inp;
+
+    if(inp == "b" || (prev_id == "" && inp == "q")){
+      action = step_manager.getStep(prev_id, current_step->getID());
+      break;
+
+    }else if(inp == "n" || (prev_id == "" && inp == "f")){
+      action = step_manager.getStep(next_id, current_step->getID());
+      break;
+
+    }else{
+      continue;
     }
+  }
 }
 
 int main()

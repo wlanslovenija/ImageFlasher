@@ -14,17 +14,12 @@ extern int local_ip[], local_nm[], local_gw[];
 
 NetifStep::NetifStep()
 {
-  prev_step = "welcome";
+  step_id = "netif";
   next_step = "image";
 }
 
 std::string NetifStep::getNext() {
   return next_step;
-}
-
-std::string NetifStep::getPrev() 
-{
-  return prev_step;
 }
 
 void NetifStep::init()
@@ -51,5 +46,11 @@ void NetifStep::init()
 
 void NetifStep::process() 
 {
+  /*
+   * Populate local_ip, local_gw, local_nm 
+   * as needed by the router type
+   *
+   * call my_ini
+   * */
 }
 

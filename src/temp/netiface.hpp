@@ -16,7 +16,6 @@ class NetifStep : public UISelection {
     NetifStep();
     
     std::string getNext();
-    std::string getPrev();
 
     void init();
     void process();

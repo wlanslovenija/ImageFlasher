@@ -5,17 +5,14 @@ using namespace std;
 #include "netiface.hpp"
 
 Welcome::Welcome(){
+  step_id = "welcome";
   next_step = "netif";
-  prev_step = "";
 }
 
 std::string Welcome::getNext() {
     return next_step;
 }
 
-std::string Welcome::getPrev() {
-  return prev_step;
-}
 
 void Welcome::init()
 {

@@ -15,7 +15,6 @@ class ImageStep : public UIInput {
     ImageStep();
 
     std::string getNext();
-    std::string getPrev();
 
     void init();
     void process();

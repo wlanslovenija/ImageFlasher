@@ -10,17 +10,12 @@ class UIStep;
 
 ImageStep::ImageStep()
 {
-  prev_step = "netif";
+  step_id = "image";
   next_step = "router";
 }
 
 std::string ImageStep::getNext() {
   return next_step;
-}
-
-
-std::string ImageStep::getPrev() {
-  return prev_step;
 }
 
 void ImageStep::init()

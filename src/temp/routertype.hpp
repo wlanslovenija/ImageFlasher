@@ -16,7 +16,6 @@ class RouterStep : public UISelection {
     RouterStep();
     
     std::string getNext();
-    std::string getPrev();
 
     void init();
     void process();

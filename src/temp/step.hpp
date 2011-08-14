@@ -12,7 +12,7 @@ class Step {
     UI *ui;
 
     std::string next_step;
-    std::string prev_step;
+    std::string step_id;
 
     std::string step_name;
     std::string step_desc;
@@ -23,11 +23,11 @@ class Step {
 
   public:
 
-    std::string get_name();
-    std::string get_desc();
+    std::string getName();
+    std::string getDesc();
+    std::string getID();
 
     virtual std::string getNext()   = 0;
-    virtual std::string getPrev()   = 0;
 
     virtual void init()    = 0;
     virtual void process() = 0;
