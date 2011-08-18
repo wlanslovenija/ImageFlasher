@@ -17,19 +17,13 @@ class UI {
 
   void init_step();
   void proceed();
-  
-  public:
-  void run();
-
-  void init_selection(std::list<std::string> items);
-  std::string get_selection(std::list<std::string> items);
-
-  void init_input(std::string msg);
-  std::string get_input(std::string item);
 
   void set_action(Step *act);
 
+  public:
+  void run();
 
+  
 };
 
 #endif /* IMGFLSHR_UI_H */
