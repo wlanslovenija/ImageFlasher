@@ -3,7 +3,7 @@ using namespace std;
 #include <string>
 #include "welcome.hpp"
 #include "netiface.hpp"
-#include "image.hpp"
+#include "image_step.hpp"
 #include "routertype.hpp"
 class UIStep;
 

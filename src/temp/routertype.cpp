@@ -3,7 +3,6 @@ using namespace std;
 #include "routertype.hpp"
 #include "step.hpp"
 #include "ui_selection.hpp"
-#include "image.hpp"
 #include <list>
 #include <string>
 

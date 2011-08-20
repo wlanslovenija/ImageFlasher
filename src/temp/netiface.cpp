@@ -5,7 +5,6 @@ using namespace std;
 #include <pcap.h>
 #include "ui.hpp"
 #include "netiface.hpp"
-#include "image.hpp"
 #include "step.hpp"
 #include "ui_selection.hpp"
 

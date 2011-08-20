@@ -3,7 +3,7 @@ using namespace std;
 #include <string>
 #include <pcap.h>
 #include "ui.hpp"
-#include "image.hpp"
+#include "image_step.hpp"
 #include "routertype.hpp"
 
 class UIStep;

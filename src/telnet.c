@@ -66,6 +66,8 @@ int main(int argc, char **argv)
 
 #include "lwip/api.h"
 
+extern int local_ip[], local_gw[], local_nm[];
+
 static struct netconn *conn;
 
 static void netread(void *arg)
@@ -73,28 +75,47 @@ static void netread(void *arg)
   int nbytes;
   char *buf;
   conn = netconn_new(NETCONN_TCP);
+  struct netbuf recvbuf;
+
+  char **argv = arg;
 
   struct ip_addr remote;
-  inet_aton(argv[1], &(local.addr));
+  inet_aton(argv[1], &(remote.addr));
  
-  netconn_connect(conn, remote, atoi(argv[2]));
+  netconn_connect(conn, (struct ip_addr_t *)&remote, atoi(argv[2]));
 
   while(1){
-    netconn_recv(client, &recvbuf);
-    netbuf_data(recvbuf, &buf, &nbytes); 
+    netconn_recv(conn, &recvbuf);
+    netbuf_data(&recvbuf, &buf, &nbytes); 
     write(stdout, buf, nbytes);
   }
 }
 
 int main(int argc, char **argv)
 {
-  my_init();
+  char buf[512];
 
-  sys_thread_new("netread", netread, NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+  local_ip[0]=192;
+  local_ip[1]=168;
+  local_ip[2]=1;
+  local_ip[3]=11;
+
+  
+  local_gw[0]=192;
+  local_gw[1]=168;
+  local_gw[2]=1;
+  local_gw[3]=11;
+
+  local_nm[0]=255;
+  local_nm[1]=255;
+  local_nm[2]=255;
+  local_nm[3]=0;
+
+  my_init();
+  sys_thread_new("netread", netread, argv, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
 
   int n;
-  do{
-
+  do{ 
     n = read(stdin, buf, sizeof(buf));
     
     netconn_write(conn, buf, n, 0);

@@ -1,7 +1,7 @@
 using namespace std;
 
-#ifndef GUI_IMAGE_HPP
-#define GUI_IMAGE_HPP
+#ifndef GUI_IMAGE_STEP_HPP
+#define GUI_IMAGE_STEP_HPP
 
 #include "ui_step.hpp"
 #include "ui_input.hpp"
@@ -20,4 +20,4 @@ class ImageStep : public UIInput {
     void process();
 
 };
-#endif /* GUI_IMAGE_HPP */
+#endif /* GUI_IMAGE_STEP_HPP */
