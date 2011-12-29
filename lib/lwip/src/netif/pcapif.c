@@ -171,22 +171,28 @@ low_level_output(struct netif *netif, struct pbuf *p)
   struct pcapif *pcapif = netif->state;
   struct pbuf *q;
 
-  // Whoa! what is this, huh? initiate transfer();
+ // initiate transfer();
   
 #if ETH_PAD_SIZE
   pbuf_header(p, -ETH_PAD_SIZE); /* drop the padding word */
 #endif
 
+  u8_t *tmpbuf = safe_malloc(sizeof(u8_t) * p->tot_len);
+  u32_t cnt = 0;
   for(q = p; q != NULL; q = q->next) {
     /* Send the data from the pbuf to the interface, one pbuf at a
        time. The size of the data in each pbuf is kept in the ->len
        variable. */
-    int ret = pcap_inject(pcapif->pc_descr,q->payload,q->len);
-    if(ret == -1)
-      pcap_perror(pcapif->pc_descr,"pcap_inject");
+       
+    memcpy(tmpbuf+cnt, q->payload, q->len); 
+    cnt += q->len;
   }
 
-  // Whoa!! what is this?? ?signal that packet should be sent();
+    int ret = pcap_inject(pcapif->pc_descr,tmpbuf,p->tot_len);
+    if(ret == -1)
+      pcap_perror(pcapif->pc_descr,"pcap_inject");
+
+  // signal that packet should be sent();
 
 #if ETH_PAD_SIZE
   pbuf_header(p, ETH_PAD_SIZE); /* reclaim the padding word */
