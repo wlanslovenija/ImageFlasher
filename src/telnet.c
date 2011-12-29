@@ -35,6 +35,7 @@ static void netread(void *arg)
               netbuf_data(recvbuf, (void**)&buf, (u16_t*)&nbytes); 
               write(STDOUT, buf, nbytes);
               netbuf_free(recvbuf);
+              netbuf_delete(recvbuf);
        }
 }
 

@@ -191,6 +191,7 @@ low_level_output(struct netif *netif, struct pbuf *p)
     int ret = pcap_inject(pcapif->pc_descr,tmpbuf,p->tot_len);
     if(ret == -1)
       pcap_perror(pcapif->pc_descr,"pcap_inject");
+    free(tmpbuf);
 
   // signal that packet should be sent();
 
