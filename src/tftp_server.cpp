@@ -28,7 +28,7 @@ void TftpServer::start(){
 
   serv = netconn_new(NETCONN_UDP); 
 
-  netconn_bind(serv, NULL, TFTP_PORT);
+  netconn_bind(serv, IP_ADDR_ANY, TFTP_PORT);
 
   netconn_listen(serv);
 
@@ -47,6 +47,7 @@ void TftpServer::start(){
         if(recv_buf == NULL)
           break;
       netbuf_data(recv_buf, (void **)&recv_data, &len);
+      netbuf_delete(recv_buf);
 
       opcode = (u16_t *)recv_data;
 
@@ -122,4 +123,11 @@ void TftpServer::start(){
     break;
   }
 
+}
+
+int main(int argc, char **argv)
+{
+       TftpServer ts;
+       ts.start();
+       return 0;
 }
