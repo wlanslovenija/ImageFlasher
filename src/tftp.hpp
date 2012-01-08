@@ -3,7 +3,7 @@
 
 #define MODE_NETASCII 1
 #define MODE_BINARY 2
-#define DEFAULT_RTT 1000
+#define DEFAULT_RTT 1
 
 extern "C"{
 #include "lwip/api.h"
@@ -16,9 +16,9 @@ struct ack {
 
 class TftpClient {
         private:
-                struct netconn *conn;
                 struct ip_addr rem_host;
                 u16_t rem_port;
+                u16_t sec_port;
                 u16_t blkno;
                 int rtt;
                 bool connected;
@@ -27,7 +27,7 @@ class TftpClient {
                 sys_sem_t get_wait;
                 sys_sem_t snd_nxt;
                 u16_t loc_port;
-                FILE *fd;
+                int fd;
                 struct udp_pcb *pcb;
 
                 friend void hndl_pkt(void *arg, struct udp_pcb *pcb, struct pbuf *p, struct ip_addr *host, u16_t port);

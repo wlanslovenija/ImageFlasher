@@ -24,10 +24,7 @@ void TftpClient::error(const char *msg, bool fatal)
 
 TftpClient::~TftpClient()
 {
-        if(conn == NULL)
-                return;
-        netconn_close(conn);
-        netconn_delete(conn);
+        // Any required cleanup
 }
 
 static void *safe_malloc(int size)
@@ -54,19 +51,12 @@ int TftpClient::connect(char *host, u16_t port)
 
         if(connected == true){
                error(lwip_strerr(ERR_ISCONN), false); 
-               return -1;
         }
 
         ipaddr_aton(host, &rem_host);
         rem_port = port;
-        err_t e = netconn_connect(conn, &rem_host, rem_port);
 
-        if(e == ERR_OK){
-                return 0;
-        }else{
-                error(lwip_strerr(e), true);
-                return -1;
-        }
+        return 0;
 }
 
 TftpClient::TftpClient(char *host, u16_t port)
@@ -92,11 +82,15 @@ void ack_recvr(void *arg, struct udp_pcb *pcb, struct pbuf *p, struct ip_addr *h
         u16_t len = p->len;
 
         u16_t blk;
-
+        
         u16_t opcode = ntohs(*(u16_t *)data);
         if(opcode == 4){
-               blk = ntohs(*(u16_t *)data+2); 
-               
+                char *tmp = data+sizeof(u16_t);
+                blk = ntohs(*(u16_t *)tmp);
+
+                if(blk == 0)
+                        tc->sec_port = port;
+
                // Ignore duplicate ACK'S
                if(blk < tc->blkno)
                       return;
@@ -104,8 +98,13 @@ void ack_recvr(void *arg, struct udp_pcb *pcb, struct pbuf *p, struct ip_addr *h
                // ACK to current block
                tc->blkno++;
                sys_sem_signal(&tc->snd_nxt);
+
+               return;
         }
 
+        if(opcode == 5){
+                tc->error(data+4, true);
+        }
         tc->error("Recieved irrelavent data from target..... Ignoring", false);
 }
 
@@ -137,16 +136,21 @@ void hndl_pkt(void *arg, struct udp_pcb *pcb, struct pbuf *p, struct ip_addr *ho
                 if(pktblk < tc->blkno)
                         return;
 
-                fwrite(data+4, 1, datalen-4, tc->fd);
+                write(tc->fd, data+4,datalen-4);
+
                 tc->blkno++;
                 
                 if(datalen-4 < 512){
-                        sleep(2);
+                        //sleep(2);
                         sys_sem_signal(&(tc->get_wait));
                 }
 
                 return;
 
+        }
+        
+        if(opcode == 5){
+                tc->error(data+4, true);
         }
 
         tc->error("Recieved irrelavent data from target..... Ignoring", false);
@@ -162,12 +166,9 @@ int TftpClient::get(char *rem_file, char *loc_file)
                 return -1;
         }
 
-        if(mode == MODE_NETASCII)
-                fd = fopen(loc_file, "w");
-        else
-                fd = fopen(loc_file, "wb");
+        fd = open(loc_file, O_WRONLY);
 
-        blkno = 1; // Confirm this 
+        blkno = 1; 
 
         // Craft the initial get request with appropriate mode 
         int bufsize =  strlen(rem_file) + 4 + (mode == MODE_NETASCII ? strlen("netascii") : strlen("octet")); 
@@ -200,10 +201,15 @@ int TftpClient::get(char *rem_file, char *loc_file)
 
 int TftpClient::put(char *filename)
 {
-        if(mode == MODE_NETASCII)
-                fd = fopen(filename, "r");
-        else
-                fd = fopen(filename, "rb");
+        struct udp_pcb * pcb = udp_new();
+        err = udp_bind(pcb, IP_ADDR_ANY, loc_port);
+        if(err != ERR_OK){
+                error(lwip_strerr(err), false);
+                return -1;
+        }
+
+
+        fd = open(filename, O_RDONLY);
 
         sys_sem_new(&snd_nxt, 0);
 
@@ -221,6 +227,7 @@ int TftpClient::put(char *filename)
 
 
 
+        blkno = 0;
         // Set the packet recv handler
         udp_recv(pcb, ack_recvr, this);
 
@@ -228,44 +235,46 @@ int TftpClient::put(char *filename)
         u32_t w_ack;
         struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, bufsize, PBUF_ROM); 
         p->payload = pkt;
-
         do{
-                udp_sendto(pcb, p, &rem_host, rem_port);
+
+                err_t e = udp_sendto(pcb, p, &rem_host, rem_port);
+                if(e != ERR_OK)
+                        error(lwip_strerr(e), false);
                 w_ack = sys_arch_sem_wait(&snd_nxt, rtt);
-        }while(w_ack != SYS_ARCH_TIMEOUT);
+
+        }while(w_ack == SYS_ARCH_TIMEOUT);
+        pbuf_free(p);
+
 
         // Craft the next data packet
         char data[600];
-        blkno = 1;
         u16_t *tmp;
-        p->payload = data;
         int kbytes;
 
         while(1){
                 tmp = (u16_t *)data;
                 *tmp = htons(3);
-                tmp = (u16_t *)data+2;
+                tmp = (u16_t *)(data+sizeof(u16_t));
                 *tmp = htons(blkno);
 
-                kbytes = fread(data, 1, 512, fd);
-                if(kbytes == EOVERFLOW){
-                        // Successfully transferred the entire file;
-                        free(pkt);
-                        pbuf_free(p);
-                        udp_remove(pcb);
-                        fclose(fd);
-                        return 0;
-                }
+                kbytes = read(fd, data+4, 512);
 
-                memcpy(pkt+4, data, kbytes);
-                p->len = 4+kbytes;
+                p = pbuf_alloc(PBUF_TRANSPORT, 4+kbytes, PBUF_ROM);
+                p->payload = data;
 
                 do{
-                        udp_sendto(pcb, p, &rem_host, rem_port);
+                        err_t e = udp_sendto(pcb, p, &rem_host, sec_port);
                         w_ack = sys_arch_sem_wait(&snd_nxt, rtt);
-                }while(w_ack != SYS_ARCH_TIMEOUT);
-        }
+                }while(w_ack == SYS_ARCH_TIMEOUT);
+                pbuf_free(p);
 
+                if(kbytes < 512){
+                        udp_remove(pcb);
+                        sec_port = 0;
+                        free(pkt);
+                        return 0;
+                }
+        }
 }
 
 

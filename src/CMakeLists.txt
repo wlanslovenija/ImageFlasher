@@ -12,7 +12,7 @@ add_library(tftp tftp.cpp)
 add_executable(s s.c unixlib.c)
 add_executable(c c.c unixlib.c)
 add_executable(telnet telnet.c unixlib.c)
-
+add_executable(tftptest tftp_test.cpp unixlib.c)
 
 set (liblwip 
   lwipcap
@@ -22,12 +22,14 @@ set (liblwip
   lwipsnmp
   )
 
+target_link_libraries(tftp ${liblwip})
 target_link_libraries(hs ${liblwip})
 target_link_libraries(cmd ${liblwip})
 target_link_libraries(s ${liblwip})
 target_link_libraries(c ${liblwip})
 target_link_libraries(telnet ${liblwip})
-target_link_libraries(tftp ${liblwip})
+target_link_libraries(tftptest ${liblwip})
+target_link_libraries(tftptest tftp)
 
 install(TARGETS cmd DESTINATION ${CMAKE_BUILD_DIR}/cmd)
 
