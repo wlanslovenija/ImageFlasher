@@ -2,7 +2,7 @@
 #define IMAGEFLASHER_TFTP_HPP
 
 #define MODE_NETASCII 1
-#define MODE_BINARY 2
+#define MODE_OCTET 2
 #define DEFAULT_RTT 1
 
 extern "C"{

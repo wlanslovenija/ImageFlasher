@@ -6,6 +6,70 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+static char fgetc(int fd)
+{
+        char c;
+        int i = read(fd, &c, 1);
+        if(i==0)
+                return EOF;
+        return c;
+}
+
+static void fputc(char c, int fd)
+{
+        write(fd, &c, 1);
+}
+
+static int netascii_open(char *fn, int flags)
+{
+
+        int tmpfd = open("tftp.tmp", O_CREAT|O_WRONLY); 
+        int fd = open(fn, O_RDONLY);
+
+        char c = fgetc(fd);
+        while(c != EOF){
+                if(c == '\n'){
+                        fputc(13, tmpfd);
+                        fputc(10, tmpfd);
+                }else if(c == '\r'){
+                        fputc(13, tmpfd); 
+                        fputc(0, tmpfd);
+                }else{
+                        fputc(c, tmpfd); 
+                }
+
+                c = fgetc(fd);
+
+        }
+
+        close(fd);
+        close(tmpfd);
+        
+        return open("tftp.tmp", flags);
+
+}
+
+static int netascii_write(int fd, char *buf, int size)
+{
+        for(int i=0; i<size; i++){
+                if(buf[i] == 13){
+                        i++;
+                        if(buf[i] == 10)
+                                fputc('\n', fd);
+                        else
+                                fputc('\r', fd);
+                }else{
+                        fputc(buf[i], fd);
+                }
+        }
+}
+
+static void netascii_close(int fd)
+{
+        close(fd);
+        unlink("tftp.tmp");
+}
+
 TftpClient::TftpClient()
 {
         connected = false;
@@ -136,7 +200,11 @@ void hndl_pkt(void *arg, struct udp_pcb *pcb, struct pbuf *p, struct ip_addr *ho
                 if(pktblk < tc->blkno)
                         return;
 
-                write(tc->fd, data+4,datalen-4);
+                if(tc->mode == MODE_OCTET){
+                        write(tc->fd, data+4,datalen-4);
+                }else{
+                        netascii_write(tc->fd, data+4, datalen-4);
+                }
 
                 tc->blkno++;
                 
@@ -167,6 +235,7 @@ int TftpClient::get(char *rem_file, char *loc_file)
         }
 
         fd = open(loc_file, O_WRONLY);
+
 
         blkno = 1; 
 
@@ -209,7 +278,11 @@ int TftpClient::put(char *filename)
         }
 
 
-        fd = open(filename, O_RDONLY);
+        if(mode == MODE_OCTET){
+                fd = open(filename, O_RDONLY);
+        }else{
+                fd = netascii_open(filename, O_RDONLY);
+        }
 
         sys_sem_new(&snd_nxt, 0);
 
@@ -269,6 +342,12 @@ int TftpClient::put(char *filename)
                 pbuf_free(p);
 
                 if(kbytes < 512){
+                        if(mode == MODE_OCTET){
+                                close(fd);
+                        }else{
+                                netascii_close(fd);
+                        }
+
                         udp_remove(pcb);
                         sec_port = 0;
                         free(pkt);
