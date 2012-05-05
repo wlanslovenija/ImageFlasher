@@ -1,8 +1,0 @@
-syntax: regexp
-^build
-syntax: glob
-.*
-syntax: regexp
-^lib/lwip/bin
-syntax: regexp
-^src/temp/a.out

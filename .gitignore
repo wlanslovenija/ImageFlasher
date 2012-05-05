@@ -1,0 +1,4 @@
+.*
+/build
+/lib/lwip/bin
+/src/temp/a.out
